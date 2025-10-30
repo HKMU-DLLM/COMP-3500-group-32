@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Login</title>
+		<link rel="stylesheet" href="/style.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1>Login Page</h1>
+			<h2>Select Your role</h2>
+			<form method="POST" action="/login">
+				<input type="radio" id="radio_customer" name="role" value="customer" />
+				<label for="radio_customer">Customer</label>
+				<br />
+				<input type="radio" id="radio_restaurant" name="role" value="restaurant" />
+				<label for="radio_restaurant">Restaurant</label>
+				<br />
+				<input type="radio" id="radio_rider" name="role" value="rider" />
+				<label for="radio_rider">Rider</label>
+				<br />
+				<button type="submit">Login</button>
+			</form>
+		</div>
+	</body>
+</html>

@@ -1,16 +1,42 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+const path = require("path");
+
 const app = express();
-const PORT = 3000;
 
-// Serve static files from "public" folder
-app.use(express.static("public"));
+// Routers
+const restaurantRouter = require("./routes/restaurant");
+const customerRouter = require("./routes/customer");
+const riderRouter = require("./routes/rider");
 
-// Default route
+// Middleware
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use("/static", express.static("public"));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Routes
 app.get("/", (req, res) => {
-	res.sendFile(__dirname + "/public/index.html");
+	console.log("New access to website");
+	res.status(200).render("auth/login");
 });
 
-// Start server
-app.listen(PORT, () => {
-	console.log(`Server running at http://localhost:${PORT}`);
+app.post("/login", (req, res) => {
+	console.log("Login attempt:", req.body);
+
+	const role = req.body.role;
+	if (!["customer", "restaurant", "rider"].includes(role)) {
+		return res.redirect("/");
+	}
+
+	res.redirect(`/${role}`);
 });
+
+// Role routes
+app.use("/restaurant", restaurantRouter);
+app.use("/customer", customerRouter);
+app.use("/rider", riderRouter);
+
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));

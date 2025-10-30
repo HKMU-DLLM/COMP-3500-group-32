@@ -7,7 +7,9 @@
 		"start": "node server.js"
 	},
 	"dependencies": {
-		"express": "*"
+		"body-parser": "latest",
+		"ejs": "latest",
+		"express": "latest"
 	},
 	"keywords": [],
 	"author": "",
