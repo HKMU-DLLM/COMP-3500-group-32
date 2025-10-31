@@ -9,7 +9,8 @@
 	"dependencies": {
 		"body-parser": "latest",
 		"ejs": "latest",
-		"express": "latest"
+		"express": "latest",
+		"better-sqlite3": "latest"
 	},
 	"keywords": [],
 	"author": "",
