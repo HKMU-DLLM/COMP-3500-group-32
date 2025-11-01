@@ -3,8 +3,7 @@ const db = new Database("restaurant.db");
 
 db.exec(`
 CREATE TABLE restaurants (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    name TEXT PRIMARY KEY,
     cuisine_type TEXT NOT NULL
 );
 
@@ -18,10 +17,10 @@ CREATE TABLE menus (
 
 CREATE TABLE reviews (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    restaurant_id INTEGER NOT NULL,
+    restaurant TEXT NOT NULL,
     rating INTEGER CHECK(rating >=1 AND rating <=5),
     comment TEXT,
-    FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+    FOREIGN KEY (TEXT) REFERENCES restaurants(name)
 );
 
 CREATE TABLE orders (
