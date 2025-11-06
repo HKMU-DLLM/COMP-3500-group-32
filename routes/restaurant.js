@@ -16,10 +16,34 @@ router.get("/", (req, res) => {
 	}
 
 	const menus = db.prepare("SELECT * FROM menus WHERE restaurant = ?").all(name);
-	res.render("restaurant/dashboard", {
-		restaurant,
-		menus,
+	const orders = db
+		.prepare(
+			`
+		SELECT DISTINCT o.*
+		FROM orders o
+		JOIN order_items oi ON o.id = oi.order_id
+		JOIN menus m ON oi.menu_id = m.id
+		WHERE m.restaurant = ?
+		ORDER BY o.created_at DESC
+	`
+		)
+		.all(name);
+
+	// Attach order_items (with dish_name + quantity)
+	orders.forEach((order) => {
+		order.items = db
+			.prepare(
+				`
+			SELECT m.dish_name, oi.quantity
+			FROM order_items oi
+			JOIN menus m ON oi.menu_id = m.id
+			WHERE oi.order_id = ?
+		`
+			)
+			.all(order.id);
 	});
+
+	res.render("restaurant/dashboard", { restaurant, menus, orders });
 });
 // --- Add new menu item ---
 router.post("/menu/new", (req, res) => {
@@ -52,7 +76,11 @@ router.post("/menu/edit/:id", (req, res) => {
 
 	res.redirect(`/restaurant?name=${encodeURIComponent(restaurant)}`);
 });
-
+// Mark order as completed
+router.post("/order/complete/:id", (req, res) => {
+	db.prepare("UPDATE orders SET restaurant_completed = 1 WHERE id = ?").run(req.params.id);
+	res.redirect("back");
+});
 // --- Delete menu item ---
 router.post("/menu/delete/:id", (req, res) => {
 	const menu = db.prepare("SELECT restaurant FROM menus WHERE id = ?").get(req.params.id);
