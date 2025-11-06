@@ -1,9 +1,5 @@
 const Database = require("better-sqlite3");
-const path = require("path");
-
-// 讓 DB 放在 /db/ 下
-const dbPath = path.resolve(__dirname, "restaurant.db");
-const db = new Database(dbPath);
+const db = new Database("restaurant.db");
 
 db.exec(`
 CREATE TABLE restaurants (
@@ -76,4 +72,3 @@ CREATE TABLE order_items (
     FOREIGN KEY (menu_id) REFERENCES menus(id)
 );
 `);
-console.log("✅ restaurant.db 已建立於 /db/ 資料夾。");
