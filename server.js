@@ -26,11 +26,12 @@ app.post("/login", (req, res) => {
 	console.log("Login attempt:", req.body);
 
 	const role = req.body.role;
+	const name = req.body.name;
 	if (!["customer", "restaurant", "rider"].includes(role)) {
 		return res.redirect("/");
 	}
 
-	res.redirect(`/${role}`);
+	res.redirect(`/${role}?name=${encodeURIComponent(name)}`);
 });
 
 // Role routes
