@@ -54,13 +54,9 @@ CREATE TABLE orders (
     )
     REFERENCES rider (name),
     FOREIGN KEY (
-        customer_address
+        restaurant_name
     )
-    REFERENCES customer (address),
-    FOREIGN KEY (
-        restaurant_address
-    )
-    REFERENCES restaurants (address) 
+    REFERENCES restaurants (name) 
 );
 
 CREATE TABLE order_items (
