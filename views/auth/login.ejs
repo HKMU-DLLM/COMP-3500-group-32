@@ -9,18 +9,69 @@
 		<div class="container">
 			<h1>Login Page</h1>
 			<h2>Select Your role</h2>
-			<form method="POST" action="/login">
-				<input type="radio" id="radio_customer" name="role" value="customer" />
-				<label for="radio_customer">Customer</label>
-				<br />
-				<input type="radio" id="radio_restaurant" name="role" value="restaurant" />
-				<label for="radio_restaurant">Restaurant</label>
-				<br />
-				<input type="radio" id="radio_rider" name="role" value="rider" />
-				<label for="radio_rider">Rider</label>
+			<form method="POST" action="/login" id="loginForm">
+				<!-- Customer -->
+				<div>
+					<input type="radio" id="radio_customer" name="role" value="customer" />
+					<label for="radio_customer">Customer</label>
+					<input
+						type="text"
+						id="customer_name"
+						name="name"
+						placeholder="Customer Name"
+						disabled />
+				</div>
+
+				<!-- Restaurant -->
+				<div>
+					<input type="radio" id="radio_restaurant" name="role" value="restaurant" />
+					<label for="radio_restaurant">Restaurant</label>
+					<input
+						type="text"
+						id="restaurant_name"
+						name="name"
+						placeholder="Restaurant Name"
+						disabled />
+				</div>
+
+				<!-- Rider -->
+				<div>
+					<input type="radio" id="radio_rider" name="role" value="rider" />
+					<label for="radio_rider">Rider</label>
+					<input
+						type="text"
+						id="rider_name"
+						name="name"
+						placeholder="Rider Name"
+						disabled />
+				</div>
+
 				<br />
 				<button type="submit">Login</button>
 			</form>
 		</div>
 	</body>
 </html>
+<script>
+	const radios = document.querySelectorAll('input[name="role"]');
+	const textInputs = document.querySelectorAll('input[name="name"]');
+
+	radios.forEach((radio) => {
+		radio.addEventListener("change", () => {
+			// Disable all text fields
+			textInputs.forEach((input) => {
+				input.disabled = true;
+				input.required = false;
+				input.value = "";
+			});
+
+			// Enable the one matching selected role
+			const selectedInput = document.getElementById(`${radio.value}_name`);
+			if (selectedInput) {
+				selectedInput.disabled = false;
+				selectedInput.required = true;
+				selectedInput.focus();
+			}
+		});
+	});
+</script>
