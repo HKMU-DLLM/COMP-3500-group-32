@@ -16,8 +16,19 @@ router.get("/", (req, res) => {
 
 // Menu page
 router.get("/menu/:id", (req, res) => {
-	const id = req.params.id;
-	res.render("customer/menu", { id });
+    const id = req.params.id; 
+
+    try {
+        const stmt = db.prepare("SELECT * FROM menus WHERE restaurant = ?");
+        const menus = stmt.all(id); 
+		console.log(menus);
+
+        res.render("customer/menu", { menus });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Database error");
+    }
 });
 
 module.exports = router;
+
