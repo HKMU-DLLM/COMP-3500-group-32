@@ -2,13 +2,56 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<title>Dashboard</title>
-		<link rel="stylesheet" href="/style.css" />
+		<title><%= restaurant.name %> Dashboard</title>
 	</head>
 	<body>
-		<div class="container">
-			<h1>Welcome, <%= name %></h1>
-			<p>This is your protected dashboard page.</p>
-		</div>
+		<h1><%= restaurant.name %> Menu Dashboard</h1>
+		<p>Cuisine: <%= restaurant.cuisine_type %></p>
+
+		<h2>Menu Items</h2>
+		<% if (menus && menus.length > 0) { %>
+		<table border="1" cellpadding="8" cellspacing="0">
+			<thead>
+				<tr>
+					<th>Dish Name</th>
+					<th>Price</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% menus.forEach(menu => { %>
+				<tr>
+					<td><%= menu.dish_name %></td>
+					<td>$<%= menu.price.toFixed(2) %></td>
+					<td>
+						<form
+							action="/restaurant/menu/edit/<%= menu.id %>"
+							method="get"
+							style="display: inline">
+							<button type="submit">Edit</button>
+						</form>
+						<form
+							action="/restaurant/menu/delete/<%= menu.id %>"
+							method="post"
+							style="display: inline">
+							<button type="submit">Delete</button>
+						</form>
+					</td>
+				</tr>
+				<% }) %>
+			</tbody>
+		</table>
+		<% } else { %>
+		<p>No menu items yet.</p>
+		<% } %>
+
+		<hr />
+		<h2>Add New Menu Item</h2>
+		<form action="/restaurant/menu/new" method="post">
+			<input type="hidden" name="restaurant" value="<%= restaurant.name %>" />
+			<label>Dish Name: <input type="text" name="dish_name" required /></label><br />
+			<label>Price: <input type="number" name="price" step="0.01" required /></label><br />
+			<button type="submit">Add</button>
+		</form>
 	</body>
 </html>

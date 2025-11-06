@@ -8,11 +8,14 @@ CREATE TABLE restaurants (
 );
 
 CREATE TABLE menus (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    restaurant_id INTEGER NOT NULL,
-    dish_name TEXT NOT NULL,
-    price REAL NOT NULL,
-    FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    restaurant TEXT    NOT NULL,
+    dish_name  TEXT    NOT NULL,
+    price      REAL    NOT NULL,
+    FOREIGN KEY (
+        restaurant
+    )
+    REFERENCES restaurants (name) 
 );
 
 CREATE TABLE reviews (
