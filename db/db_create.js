@@ -8,11 +8,13 @@ const db = new Database(dbPath);
 db.exec(`
 CREATE TABLE restaurants (
     name TEXT PRIMARY KEY,
-    cuisine_type TEXT NOT NULL
+    cuisine_type TEXT NOT NULL,
+    address TEXT NOT NULL
 );
 
 CREATE TABLE customer (
-    name TEXT PRIMARY KEY NOT NULL
+    name TEXT PRIMARY KEY NOT NULL,
+    address TEXT NOT NULL
 );
 
 CREATE TABLE rider (
@@ -37,13 +39,32 @@ CREATE TABLE reviews (
 );
 
 CREATE TABLE orders (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    customer_name TEXT,
-    address TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    rider_name TEXT,
-    FOREIGN KEY (customer_name) REFERENCES customer(name),
-    FOREIGN KEY (rider_name) REFERENCES rider(name)
+    id                   INTEGER  PRIMARY KEY AUTOINCREMENT,
+    customer_name        TEXT,
+    customer_address     TEXT     NOT NULL,
+    created_at           DATETIME DEFAULT CURRENT_TIMESTAMP,
+    rider_name           TEXT,
+    restaurant_completed INTEGER  DEFAULT (0) 
+                                    CHECK (restaurant_completed IN (0, 1) ) 
+                                    NOT NULL,
+    restaurant_name      TEXT     NOT NULL,
+    restaurant_address   TEXT     NOT NULL,
+    FOREIGN KEY (
+        customer_name
+    )
+    REFERENCES customer (name),
+    FOREIGN KEY (
+        rider_name
+    )
+    REFERENCES rider (name),
+    FOREIGN KEY (
+        customer_address
+    )
+    REFERENCES customer (address),
+    FOREIGN KEY (
+        restaurant_address
+    )
+    REFERENCES restaurants (address) 
 );
 
 CREATE TABLE order_items (
