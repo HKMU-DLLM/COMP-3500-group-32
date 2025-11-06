@@ -1,3 +1,7 @@
+## Environment
+
+Requires Node.js 20.x or later, but not 25.x
+
 ## How to install
 
 In folder directory (e.g: `D:/COMP-3500-GROUP-32>`), run:

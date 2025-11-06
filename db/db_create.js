@@ -34,7 +34,7 @@ CREATE TABLE reviews (
     restaurant TEXT NOT NULL,
     rating INTEGER CHECK(rating >=1 AND rating <=5),
     comment TEXT,
-    FOREIGN KEY (TEXT) REFERENCES restaurants(name)
+    FOREIGN KEY (restaurant) REFERENCES restaurants(name)
 );
 
 CREATE TABLE orders (
