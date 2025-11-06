@@ -38,11 +38,14 @@ CREATE TABLE reviews (
 );
 
 CREATE TABLE orders (
-    id            INTEGER  PRIMARY KEY AUTOINCREMENT,
-    customer_name TEXT,
-    address       TEXT     NOT NULL,
-    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
-    rider_name    TEXT,
+    id                   INTEGER  PRIMARY KEY AUTOINCREMENT,
+    customer_name        TEXT,
+    address              TEXT     NOT NULL,
+    created_at           DATETIME DEFAULT CURRENT_TIMESTAMP,
+    rider_name           TEXT,
+    restaurant_completed INTEGER  DEFAULT (0) 
+                                    CHECK (restaurant_completed IN (0, 1) ) 
+                                    NOT NULL,
     FOREIGN KEY (
         customer_name
     )
