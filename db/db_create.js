@@ -45,6 +45,7 @@ CREATE TABLE orders (
                                     NOT NULL,
     restaurant_name      TEXT     NOT NULL,
     restaurant_address   TEXT     NOT NULL,
+    context              TEXT,
     FOREIGN KEY (
         customer_name
     )

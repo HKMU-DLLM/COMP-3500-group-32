@@ -1,91 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Rider Dashboard</title>
-  <link rel="stylesheet" href="/static/styles.css">
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; }
-    h1 { color: #333; text-align: center; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; background: #fff;
-            border-radius: 10px; overflow: hidden; box-shadow: 0 0 6px rgba(0,0,0,0.1); }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-    th { background-color: #f0f0f0; }
-    button { background: #4CAF50; color: white; border: none; padding: 6px 12px;
-             cursor: pointer; border-radius: 5px; }
-    button:hover { background: #45a049; }
-    .accepted { color: green; font-weight: bold; margin-top: 15px; text-align: center; }
-  </style>
-</head>
-<body>
-  <h1>🚴 Rider Dashboard</h1>
-  <p id="riderNameDisplay"></p>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Rider Dashboard</title>
+		<link rel="stylesheet" href="/static/styles.css" />
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				padding: 20px;
+				background-color: #f9f9f9;
+			}
+			h1 {
+				color: #333;
+				text-align: center;
+			}
+			table {
+				border-collapse: collapse;
+				width: 100%;
+				margin-top: 20px;
+				background: #fff;
+				border-radius: 10px;
+				overflow: hidden;
+				box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+			}
+			th,
+			td {
+				border: 1px solid #ddd;
+				padding: 10px;
+				text-align: left;
+			}
+			th {
+				background-color: #f0f0f0;
+			}
+			button {
+				background: #4caf50;
+				color: white;
+				border: none;
+				padding: 6px 12px;
+				cursor: pointer;
+				border-radius: 5px;
+			}
+			button:hover {
+				background: #45a049;
+			}
+			.accepted {
+				color: green;
+				font-weight: bold;
+				margin-top: 15px;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>🚴 Rider Dashboard</h1>
+		<p id="riderNameDisplay"></p>
 
-  <table id="ordersTable">
-    <thead>
-      <tr>
-        <th>Order ID</th>
-        <th>Restaurant Name</th>
-        <th>Restaurant Address</th>
-        <th>Order Items</th>
-        <th>Customer Name</th>
-        <th>Customer Address</th>
-        <th>Order Time</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (orders && orders.length > 0) { %>
-        <% orders.forEach(order => { %>
-          <% if (!order.rider_name) { %>
-            <tr id="order-<%= order.id %>">
-              <td><%= order.id %></td>
-              <td><%= order.restaurant_name %></td>
-              <td><%= order.restaurant_address %></td>
-              <td><%= order.order_items || "N/A" %></td>
-              <td><%= order.customer_name %></td>
-              <td><%= order.customer_address %></td>
-              <td><%= order.created_at %></td>
-              <td><button onclick="acceptOrder(<%= order.id %>)">Accept</button></td>
-            </tr>
-          <% } %>
-        <% }); %>
-      <% } else { %>
-        <tr><td colspan="8" style="text-align:center;">No available orders</td></tr>
-      <% } %>
-    </tbody>
-  </table>
+		<table id="ordersTable">
+			<thead>
+				<tr>
+					<th>Order ID</th>
+					<th>Restaurant Name</th>
+					<th>Restaurant Address</th>
+					<th>Order Items</th>
+					<th>Customer Name</th>
+					<th>Customer Address</th>
+					<th>Order Time</th>
+					<th>Action</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% if (orders && orders.length > 0) { %> <% orders.forEach(order => { %> <% if
+				(!order.rider_name) { %>
+				<tr id="order-<%= order.id %>">
+					<td><%= order.id %></td>
+					<td><%= order.restaurant_name %></td>
+					<td><%= order.restaurant_address %></td>
+					<td><%= order.order_items || "N/A" %></td>
+					<td><%= order.customer_name %></td>
+					<td><%= order.customer_address %></td>
+					<td><%= order.created_at %></td>
+					<td><button onclick="acceptOrder('<%= order.id %>')">Accept</button></td>
+				</tr>
+				<% } %> <% }); %> <% } else { %>
+				<tr>
+					<td colspan="8" style="text-align: center">No available orders</td>
+				</tr>
+				<% } %>
+			</tbody>
+		</table>
 
-  <p id="statusMessage" class="accepted"></p>
+		<p id="statusMessage" class="accepted"></p>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const riderName = params.get("name") || "Rider";
-    document.getElementById("riderNameDisplay").innerText = `👋 Welcome, ${riderName}`;
+		<script>
+			const params = new URLSearchParams(window.location.search);
+			const riderName = params.get("name") || "Rider";
+			document.getElementById("riderNameDisplay").innerText = `👋 Welcome, ${riderName}`;
 
-    async function acceptOrder(orderId) {
-      const confirmAccept = confirm("Confirm to accept this order?");
-      if (!confirmAccept) return;
+			async function acceptOrder(orderId) {
+				const confirmAccept = confirm("Confirm to accept this order?");
+				if (!confirmAccept) return;
 
-      try {
-        const res = await fetch(`/rider/accept/${orderId}?name=${encodeURIComponent(riderName)}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ rider_name: riderName })
-        });
+				try {
+					const res = await fetch(
+						`/rider/accept/${orderId}?name=${encodeURIComponent(riderName)}`,
+						{
+							method: "POST",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ rider_name: riderName }),
+						}
+					);
 
-        if (res.ok) {
-          document.getElementById("statusMessage").innerText = "✅ Order accepted";
-          document.getElementById(`order-${orderId}`).remove();
-        } else {
-          alert("❌ Failed to accept order");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("⚠️ Error connecting to server");
-      }
-    }
-  </script>
-</body>
+					if (res.ok) {
+						document.getElementById("statusMessage").innerText = "✅ Order accepted";
+						document.getElementById(`order-${orderId}`).remove();
+					} else {
+						alert("❌ Failed to accept order");
+					}
+				} catch (err) {
+					console.error(err);
+					alert("⚠️ Error connecting to server");
+				}
+			}
+		</script>
+	</body>
 </html>
-

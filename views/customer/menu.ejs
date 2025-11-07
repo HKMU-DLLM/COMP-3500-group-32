@@ -6,101 +6,100 @@
 		<!-- <link rel="stylesheet" href="style.css" /> -->
 	</head>
 	<body>
-        <div class="container">
+		<div class="container">
 			<h1>Welcome, customer</h1>
 			<p>This is your protected dashboard page.</p>
 		</div>
 		<div class="goodsList">
-            <% menus.forEach(m => { %>
-            <div class="goods-item">
-                <div class="goods-info">
-                    <h2 class="goods-title"><%= m.dish_name %></h2>
-                    <div class="goods-confirm">
-                        <p class="goods-price">
-                            <span class="goods-price-unit">￥</span>
-                            <span><%= m.price %></span>
-                        </p>
-                        <div class="goods-btns">
-                            <i index="${i}" class="i-minus">&#x2212;</i>
-                            <span>0</span>
-                            <i index="${i}" class="i-plus">&#x2b;</i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <% }) %>
-        </div>
+			<% menus.forEach(m => { %>
+			<div class="goods-item">
+				<div class="goods-info">
+					<h2 class="goods-title"><%= m.dish_name %></h2>
+					<div class="goods-confirm">
+						<p class="goods-price">
+							<span class="goods-price-unit">￥</span>
+							<span><%= m.price %></span>
+						</p>
+						<div class="goods-btns">
+							<i index="${i}" class="i-minus">&#x2212;</i>
+							<span>0</span>
+							<i index="${i}" class="i-plus">&#x2b;</i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<% }) %>
+		</div>
 		<div class="footer">
-      		<div class="car-container">
-        		<div class="car">
+			<div class="car-container">
+				<div class="car">
 					<image href="./icon/car.webp" />
-          			<span class="totalGoods">0</span>
-        		</div>
-        		<div class="car-price">
+					<span class="totalGoods">0</span>
+				</div>
+				<div class="car-price">
 					<span class="unit">$</span>
 					<span class="totalPrice">0.00</span>
 				</div>
-        		<!-- <div class="footer-car-tip">配送费￥0</div> -->
-      		</div>
-      		<!-- <div class="footer-pay">
+				<!-- <div class="footer-car-tip">配送费￥0</div> -->
+			</div>
+			<!-- <div class="footer-pay">
 				<a href="">去结算</a>
 				<span>还差￥0元起送</span>
       		</div>   -->
-    	</div>
+		</div>
 	</body>
 	<script>
-        class Trolley {
-            constructor(goods) {
-                this.initial = 0;
-                this.sum = 0;
-                this.sumPrice = 0;
-                this.goods = goods;
-                this.doms = {
-                    goodsContainer: document.querySelector(".goodsList"),
-                    // deliveryPrice: document.querySelector(".footer-car-tip"),
-                    // footerPay: document.querySelector(".footer-pay"),
-                    // footerPaySpan: document.querySelector(".footer-pay span"),
-                    totalPrice: document.querySelector(".totalPrice"),
-                    // footerCar: document.querySelector(".footer-car"),
-                    totalGoods: document.querySelector(".totalGoods")
-                }
-                this.createHTML();
-                this.listenEvent();
-            }
+		class Trolley {
+			constructor(goods) {
+				this.initial = 0;
+				this.sum = 0;
+				this.sumPrice = 0;
+				this.goods = goods;
+				this.doms = {
+					goodsContainer: document.querySelector(".goodsList"),
+					// deliveryPrice: document.querySelector(".footer-car-tip"),
+					// footerPay: document.querySelector(".footer-pay"),
+					// footerPaySpan: document.querySelector(".footer-pay span"),
+					totalPrice: document.querySelector(".totalPrice"),
+					// footerCar: document.querySelector(".footer-car"),
+					totalGoods: document.querySelector(".totalGoods"),
+				};
+				this.createHTML();
+				this.listenEvent();
+			}
 
-        //加減icon功能
-            listenEvent() {
-                const minusButton = document.querySelectorAll('.i-minus');
-                const plusButton = document.querySelectorAll('.i-plus');
+			//加減icon功能
+			listenEvent() {
+				const minusButton = document.querySelectorAll(".i-minus");
+				const plusButton = document.querySelectorAll(".i-plus");
 
-                minusButton.forEach(btn => {
-                    btn.addEventListener('click', (event) => {
-                        const index = event.target.getAttribute('index');
-                        this.reduce(index);
-                        this.createHTML();
-                        this.updatetotalGoods();
-                        this.updatetotalPrice();
-                    });
-                });
-                
+				minusButton.forEach((btn) => {
+					btn.addEventListener("click", (event) => {
+						const index = event.target.getAttribute("index");
+						this.reduce(index);
+						this.createHTML();
+						this.updatetotalGoods();
+						this.updatetotalPrice();
+					});
+				});
 
-                plusButton.forEach(btn => {
-                    btn.addEventListener('click', (event) => {
-                        const index = event.target.getAttribute('index');
-                        this.add(index);
-                        this.createHTML();
-                        this.updatetotalGoods();
-                        this.updatetotalPrice();
-                    });
-                });
-            }
+				plusButton.forEach((btn) => {
+					btn.addEventListener("click", (event) => {
+						const index = event.target.getAttribute("index");
+						this.add(index);
+						this.createHTML();
+						this.updatetotalGoods();
+						this.updatetotalPrice();
+					});
+				});
+			}
 
-            createHTML() {
-                let html = ""
-                
-                for (let i=0; i<this.goods.length; i++) {
-                    let g = this.goods[i]
-                        html += `
+			createHTML() {
+				let html = "";
+
+				for (let i = 0; i < this.goods.length; i++) {
+					let g = this.goods[i];
+					html += `
                         <div class="goods-item">
                         <div class="goods-info">
                             <h2 class="goods-title">${g.title}</h2>
@@ -120,39 +119,39 @@
                                 </div>
                             </div>
                         </div>
-                    </div>`
-                }
-                this.doms.goodsContainer.innerHTML = html;
-                if (this.initial !== 0) {
-                    this.listenEvent();
-                } else {
-                    this.initial ++;
-                }
-            }
+                    </div>`;
+				}
+				this.doms.goodsContainer.innerHTML = html;
+				if (this.initial !== 0) {
+					this.listenEvent();
+				} else {
+					this.initial++;
+				}
+			}
 
-            reduce(index) {
-                if (this.goods[index].choose > 0) {
-                    this.goods[index].choose --;
-                    this.sum --;
-                    this.sumPrice = this.sumPrice - this.goods[index].price;
-                }
-            }
+			reduce(index) {
+				if (this.goods[index].choose > 0) {
+					this.goods[index].choose--;
+					this.sum--;
+					this.sumPrice = this.sumPrice - this.goods[index].price;
+				}
+			}
 
-            add(index) {
-                this.goods[index].choose ++;
-                this.sum ++;
-                this.sumPrice = this.sumPrice + this.goods[index].price;
-            }
+			add(index) {
+				this.goods[index].choose++;
+				this.sum++;
+				this.sumPrice = this.sumPrice + this.goods[index].price;
+			}
 
-        //購物車
-            updatetotalGoods() {
-                this.doms.totalGoods.innerHTML = this.sum;
-            }
+			//購物車
+			updatetotalGoods() {
+				this.doms.totalGoods.innerHTML = this.sum;
+			}
 
-            updatetotalPrice() {
-                this.doms.totalPrice.innerHTML = this.sumPrice.toFixed(2);
-            }
-        }
-		var trolley = new Trolley(goods)
+			updatetotalPrice() {
+				this.doms.totalPrice.innerHTML = this.sumPrice.toFixed(2);
+			}
+		}
+		var trolley = new Trolley(goods);
 	</script>
 </html>
