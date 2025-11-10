@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
 			`
 		SELECT DISTINCT *
 		FROM orders
-		WHERE restaurant_name = ?
+		WHERE restaurant_name = ? AND restaurant_completed = 0
 		ORDER BY created_at DESC
 		`
 		)
@@ -61,9 +61,10 @@ router.post("/menu/edit/:id", (req, res) => {
 	res.redirect(`/restaurant?name=${encodeURIComponent(restaurant)}`);
 });
 // Mark order as completed
-router.post("/order/complete/:id", (req, res) => {
+router.post("/complete/:id", (req, res) => {
+	const restaurant = req.body.restaurant;
 	db.prepare("UPDATE orders SET restaurant_completed = 1 WHERE id = ?").run(req.params.id);
-	res.redirect("back");
+	res.redirect(`/restaurant?name=${encodeURIComponent(restaurant)}`);
 });
 // --- Delete menu item ---
 router.post("/menu/delete/:id", (req, res) => {

@@ -65,7 +65,6 @@
 					<th>Address</th>
 					<th>Created At</th>
 					<th>Rider</th>
-					<th>Completed</th>
 					<th>Items</th>
 					<th>Actions</th>
 				</tr>
@@ -82,9 +81,10 @@
 					<td>
 						<% if (!order.restaurant_completed) { %>
 						<form
-							action="/restaurant/order/complete/<%= order.id %>"
+							action="/restaurant/complete/<%= order.id %>"
 							method="post"
 							style="display: inline">
+							<input type="hidden" name="restaurant" value="<%= restaurant.name %>" />
 							<button type="submit">Mark as Completed</button>
 						</form>
 						<% } %>
