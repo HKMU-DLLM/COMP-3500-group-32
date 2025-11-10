@@ -75,19 +75,10 @@
 				<tr>
 					<td><%= order.id %></td>
 					<td><%= order.customer_name || '-' %></td>
-					<td><%= order.address %></td>
+					<td><%= order.customer_address %></td>
 					<td><%= order.created_at %></td>
 					<td><%= order.rider_name || '-' %></td>
-					<td><%= order.restaurant_completed ? '✅' : '❌' %></td>
-					<td>
-						<% if (order.items && order.items.length > 0) { %>
-						<ul>
-							<% order.items.forEach(item => { %>
-							<li><%= item.dish_name %> × <%= item.quantity %></li>
-							<% }) %>
-						</ul>
-						<% } else { %> (Empty) <% } %>
-					</td>
+					<td><%= order.context %></td>
 					<td>
 						<% if (!order.restaurant_completed) { %>
 						<form

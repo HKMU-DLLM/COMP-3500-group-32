@@ -19,29 +19,13 @@ router.get("/", (req, res) => {
 	const orders = db
 		.prepare(
 			`
-		SELECT DISTINCT o.*
-		FROM orders o
-		JOIN order_items oi ON o.id = oi.order_id
-		JOIN menus m ON oi.menu_id = m.id
-		WHERE m.restaurant = ?
-		ORDER BY o.created_at DESC
-	`
+		SELECT DISTINCT *
+		FROM orders
+		WHERE restaurant_name = ?
+		ORDER BY created_at DESC
+		`
 		)
 		.all(name);
-
-	// Attach order_items (with dish_name + quantity)
-	orders.forEach((order) => {
-		order.items = db
-			.prepare(
-				`
-			SELECT m.dish_name, oi.quantity
-			FROM order_items oi
-			JOIN menus m ON oi.menu_id = m.id
-			WHERE oi.order_id = ?
-		`
-			)
-			.all(order.id);
-	});
 
 	res.render("restaurant/dashboard", { restaurant, menus, orders });
 });
