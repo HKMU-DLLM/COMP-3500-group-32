@@ -4,50 +4,39 @@
 		<meta charset="UTF-8" />
 		<title>Login</title>
 		<link rel="stylesheet" href="/style.css" />
+		
 	</head>
 	<body>
 		<div class="container">
-			<h1>Login Page</h1>
-			<h2>Select Your role</h2>
+			<div class="title">
+				<h1>Login Page</h1>
+				<h2>Select Your role</h2>
+				<br>
+			</div>	
 			<form method="POST" action="/login" id="loginForm">
 				<!-- Customer -->
-				<div>
-					<input type="radio" id="radio_customer" name="role" value="customer" />
-					<label for="radio_customer">Customer</label>
-					<input
-						type="text"
-						id="customer_name"
-						name="name"
-						placeholder="Customer Name"
-						disabled />
-				</div>
+				<span class="login">
+					<input type="radio" id="radio_customer" name="role" value="customer" />	
+					<label for="radio_customer" class="radio-btn">I am <br> Customer</label>
+					<input type="text" id="customer_name" name="name" placeholder="Your Name" disabled />
+				</span>
 
 				<!-- Restaurant -->
-				<div>
+				<span class="login">
 					<input type="radio" id="radio_restaurant" name="role" value="restaurant" />
-					<label for="radio_restaurant">Restaurant</label>
-					<input
-						type="text"
-						id="restaurant_name"
-						name="name"
-						placeholder="Restaurant Name"
-						disabled />
-				</div>
+					<label for="radio_restaurant" class="radio-btn">I am <br> restaurant owner</label>
+					<input type="text" id="restaurant_name" name="name" placeholder="Restaurant Name" disabled />
+				</span>
 
 				<!-- Rider -->
-				<div>
+				<span class="login">
 					<input type="radio" id="radio_rider" name="role" value="rider" />
-					<label for="radio_rider">Rider</label>
-					<input
-						type="text"
-						id="rider_name"
-						name="name"
-						placeholder="Rider Name"
-						disabled />
-				</div>
+					<label for="radio_rider" class="radio-btn">I am <br> Rider</label> 
+					<input type="text" id="rider_name" name="name" placeholder="Your name" disabled />
+				</span>
 
 				<br />
-				<button type="submit">Login</button>
+				<button type="submit" >Login</button>
 			</form>
 		</div>
 	</body>
