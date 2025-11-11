@@ -3,201 +3,200 @@
 	<head>
 		<meta charset="UTF-8" />
 		<title>Dashboard</title>
-        <style>
-            .goods-btns {
-                display: flex;
-                align-items: center;
+		<style>
+			.goods-btns {
+				display: flex;
+				align-items: center;
+			}
 
-            }
+			.goods-btns i {
+				cursor: pointer;
+				margin: 0 1rem;
+				font-size: 2rem;
+			}
 
-            .goods-btns i {
-                cursor: pointer;
-                margin: 0 1rem;
-                font-size: 2rem;
-            }
+			.footer {
+				height: 6rem;
+				color: #fff;
+				position: fixed;
+				left: 0;
+				bottom: 0;
+				width: 100%;
+				display: flex;
+			}
 
-            .footer {
-                height: 6rem;
-                color: #fff;
-                position: fixed;
-                left: 0;
-                bottom: 0;
-                width: 100%;
-                display: flex;
-            }
+			.car-container {
+				flex-grow: 1;
+				background: #3d3d3f;
+				position: relative;
+			}
 
-            .car-container {
-                flex-grow: 1;
-                background: #3d3d3f;
-                position: relative;
-            }
+			.car {
+				position: absolute;
+				width: 6rem;
+				height: 6rem;
+				left: 2rem;
+				bottom: 2rem;
+				border-radius: 30%;
+				background: #444;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 60rem;
+			}
 
-            .car {
-                position: absolute;
-                width: 6rem;
-                height: 6rem;
-                left: 2rem;
-                bottom: 2rem;
-                border-radius: 30%;
-                background: #444;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 60rem;
-            }
+			.totalGoods {
+				position: absolute;
+				width: 3rem;
+				height: 3rem;
+				background: #ec5533;
+				font-size: 2rem;
+				text-align: center;
+				border-radius: 50%;
+				line-height: 3rem;
+				right: -1rem;
+				top: -1rem;
+				display: block;
+			}
 
-            .totalGoods {
-                position: absolute;
-                width: 3rem;
-                height: 3rem;
-                background: #ec5533;
-                font-size: 2rem;
-                text-align: center;
-                border-radius: 50%;
-                line-height: 3rem;
-                right: -1rem;
-                top: -1rem;
-                display: block;
-            }
+			.car-price {
+				font-size: 2rem;
+				margin-top: 1rem;
+				margin-left: 10rem;
+				display: flex;
+				align-items: center;
+			}
 
-            .car-price {
-                font-size: 2rem;
-                margin-top: 1rem;
-                margin-left: 10rem;
-                display: flex;     
-                align-items: center;          
-            }
+			.footer-car-tip {
+				font-size: 1rem;
+				margin-top: 0.5rem;
+				margin-left: 10rem;
+			}
 
-           
-            .footer-car-tip {
-                font-size: 1rem;
-                margin-top: 0.5rem;
-                margin-left: 10rem;
-            }
-
-            .footer-pay {
-                height: 3rem;
-                width: 13rem;
-                background: #ec5533;
-                justify-content: center; 
-                font-size: 2rem;
-                text-align: center;
-                border-radius: 10px;
-                position: absolute; 
-                right: 2rem;
-                top: 1.5rem; 
-            }
-        </style>
+			.footer-pay {
+				height: 3rem;
+				width: 13rem;
+				background: #ec5533;
+				justify-content: center;
+				font-size: 2rem;
+				text-align: center;
+				border-radius: 10px;
+				position: absolute;
+				right: 2rem;
+				top: 1.5rem;
+			}
+		</style>
 	</head>
 	<body>
-        <div class="container">
+		<div class="container">
 			<h1>Welcome, customer</h1>
 			<p>This is your protected dashboard page.</p>
 		</div>
 		<div class="goodsList">
-            <% menus.forEach((m, i) => { %>
-            <div class="goods-item">
-                <div class="goods-info">
-                    <h2 class="goods-title"><%= m.dish_name %></h2>
-                    <div class="goods-confirm">
-                        <p class="goods-price">
-                            <span class="goods-price-unit">$</span>
-                            <span class="itemPrice"><%= m.price %></span>
-                        </p>
-                        <div class="goods-btns">
-                            <i index="<%= i %>" class="i-minus">&#x2212;</i>
-                            <span id="quantity-<%= i %>">0</span>
-                            <i index="<%= i %>" class="i-plus">&#x2b;</i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <% }) %>
-        </div>
+			<% menus.forEach((m, i) => { %>
+			<div class="goods-item">
+				<div class="goods-info">
+					<h2 class="goods-title"><%= m.dish_name %></h2>
+					<div class="goods-confirm">
+						<p class="goods-price">
+							<span class="goods-price-unit">$</span>
+							<span class="itemPrice"><%= m.price %></span>
+						</p>
+						<div class="goods-btns">
+							<i index="<%= i %>" class="i-minus">&#x2212;</i>
+							<span id="quantity-<%= i %>">0</span>
+							<i index="<%= i %>" class="i-plus">&#x2b;</i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<% }) %>
+		</div>
 		<div class="footer">
-      		<div class="car-container">
-        		<div class="car">
+			<div class="car-container">
+				<div class="car">
 					<image href="./icon/car.webp" />
-          			<span class="totalGoods">0</span>
-        		</div>
-        		<div class="car-price">
+					<span class="totalGoods">0</span>
+				</div>
+				<div class="car-price">
 					<span class="unit">$</span>
 					<span class="totalPrice">0.00</span>
 				</div>
-                <div class="footer-car-tip">Delivery fee $10</div>
-      		</div>
-      		<div class="footer-pay">
+				<div class="footer-car-tip">Delivery fee $10</div>
+			</div>
+			<div class="footer-pay">
 				<a class="payBtn" href="">Check out</a>
-      		</div>  
-    	</div>
+			</div>
+		</div>
 	</body>
 	<script>
-        class Trolley {
-            constructor() {
-                this.quantities = {};
-                this.sum = 0;
-                this.sumPrice = 0;
-                this.doms = {
-                    totalPrice: document.querySelector(".totalPrice"),
-                    totalGoods: document.querySelector(".totalGoods")
-                }
-                this.listenEvent();
-            }
+		class Trolley {
+			constructor() {
+				this.quantities = {};
+				this.sum = 0;
+				this.sumPrice = 0;
+				this.doms = {
+					totalPrice: document.querySelector(".totalPrice"),
+					totalGoods: document.querySelector(".totalGoods"),
+				};
+				this.listenEvent();
+			}
 
-            listenEvent() {
-                const minusButton = document.querySelectorAll('.i-minus');
-                const plusButton = document.querySelectorAll('.i-plus');
+			listenEvent() {
+				const minusButton = document.querySelectorAll(".i-minus");
+				const plusButton = document.querySelectorAll(".i-plus");
 
-                minusButton.forEach(btn => {
-                    btn.addEventListener('click', (event) => {
-                        const index = event.target.getAttribute('index');
-                        this.reduce(index);
-                        console.log(index, this.quantities[index], this.sum, this.sumPrice);
-                        this.updatetotalGoods();
-                        this.updatetotalPrice();
-                    });
-                });
-                
+				minusButton.forEach((btn) => {
+					btn.addEventListener("click", (event) => {
+						const index = event.target.getAttribute("index");
+						this.reduce(index);
+						console.log(index, this.quantities[index], this.sum, this.sumPrice);
+						this.updatetotalGoods();
+						this.updatetotalPrice();
+					});
+				});
 
-                plusButton.forEach(btn => {
-                    btn.addEventListener('click', (event) => {
-                        const index = event.target.getAttribute('index');
-                        this.add(index);
-                        console.log(index, this.quantities[index], this.sum, this.sumPrice);
-                        this.updatetotalGoods();
-                        this.updatetotalPrice();
-                    });
-                });
-                
-            }
+				plusButton.forEach((btn) => {
+					btn.addEventListener("click", (event) => {
+						const index = event.target.getAttribute("index");
+						this.add(index);
+						console.log(index, this.quantities[index], this.sum, this.sumPrice);
+						this.updatetotalGoods();
+						this.updatetotalPrice();
+					});
+				});
+			}
 
-            reduce(index) {
-                this.quantities[index] = this.quantities[index] || 0;
-                if (this.quantities[index] > 0) {
-                    this.quantities[index]--;
-                    this.sum--;
-                    this.sumPrice -= parseFloat(document.querySelectorAll('.itemPrice')[index].textContent);
-    
-                }
-                document.getElementById(`quantity-${index}`).textContent = this.quantities[index];
-            }   
+			reduce(index) {
+				this.quantities[index] = this.quantities[index] || 0;
+				if (this.quantities[index] > 0) {
+					this.quantities[index]--;
+					this.sum--;
+					this.sumPrice -= parseFloat(
+						document.querySelectorAll(".itemPrice")[index].textContent
+					);
+				}
+				document.getElementById(`quantity-${index}`).textContent = this.quantities[index];
+			}
 
-            add(index) {
-                this.quantities[index] = this.quantities[index] || 0;
-                this.quantities[index]++;
-                document.getElementById(`quantity-${index}`).textContent = this.quantities[index];
-                this.sum++;
-                this.sumPrice += parseFloat(document.querySelectorAll('.itemPrice')[index].textContent);
-            }
+			add(index) {
+				this.quantities[index] = this.quantities[index] || 0;
+				this.quantities[index]++;
+				document.getElementById(`quantity-${index}`).textContent = this.quantities[index];
+				this.sum++;
+				this.sumPrice += parseFloat(
+					document.querySelectorAll(".itemPrice")[index].textContent
+				);
+			}
 
-            updatetotalGoods() {
-                this.doms.totalGoods.innerHTML = this.sum;
-            }
+			updatetotalGoods() {
+				this.doms.totalGoods.innerHTML = this.sum;
+			}
 
-            updatetotalPrice() {
-                this.doms.totalPrice.innerHTML = this.sumPrice.toFixed(2);
-            }
-        }
+			updatetotalPrice() {
+				this.doms.totalPrice.innerHTML = this.sumPrice.toFixed(2);
+			}
+		}
 		var trolley = new Trolley();
 	</script>
 </html>
