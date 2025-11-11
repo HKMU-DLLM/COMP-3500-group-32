@@ -10,7 +10,8 @@
 		"body-parser": "latest",
 		"ejs": "latest",
 		"express": "latest",
-		"better-sqlite3": "latest"
+		"better-sqlite3": "latest",
+		"socket.io": "latest"
 	},
 	"keywords": [],
 	"author": "",

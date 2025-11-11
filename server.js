@@ -1,14 +1,18 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
+const http = require("http");
+const { Server } = require("socket.io");
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 //const db = require("./db");
-
 // Routers
 const restaurantRouter = require("./routes/restaurant");
 const customerRouter = require("./routes/customer");
 const riderRouter = require("./routes/rider");
 
+app.set("io", io);
 // Middleware
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));

@@ -2,9 +2,6 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
 
-router.get("/orders", (req, res) => {
-	res.render("restaurant/orders");
-});
 router.get("/", (req, res) => {
 	const name = req.query.name;
 	const restaurant = db
@@ -22,7 +19,7 @@ router.get("/", (req, res) => {
 		SELECT DISTINCT *
 		FROM orders
 		WHERE restaurant_name = ? AND restaurant_completed = 0
-		ORDER BY created_at DESC
+		ORDER BY created_at
 		`
 		)
 		.all(name);
@@ -75,4 +72,22 @@ router.post("/menu/delete/:id", (req, res) => {
 
 	res.redirect(`/restaurant?name=${encodeURIComponent(menu.restaurant)}`);
 });
+
+router.post("/newOrder", (req, res) => {
+	const { restaurant_name, customer_name, customer_address, context } = req.body;
+
+	db.prepare(
+		`
+		INSERT INTO orders (restaurant_name, customer_name, customer_address, context)
+		VALUES (?, ?, ?, ?)
+	`
+	).run(restaurant_name, customer_name, customer_address, context);
+
+	// Emit to all dashboards of that restaurant
+	const io = req.app.get("io");
+	io.emit("newOrder", { restaurant_name });
+
+	res.json({ success: true });
+});
+
 module.exports = router;

@@ -4,6 +4,62 @@
 		<meta charset="UTF-8" />
 		<title><%= restaurant.name %> Dashboard</title>
 	</head>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		const socket = io();
+		const restaurantName = "<%= restaurant.name %>";
+
+		socket.on("connect", () => {
+			console.log("Connected to server for live updates");
+		});
+
+		socket.on("newOrder", (data) => {
+			if (data.restaurant_name === restaurantName) {
+				console.log("New order received for this restaurant!");
+				fetchOrders(); // reuse AJAX function to reload the list
+			}
+		});
+
+		// existing fetchOrders() function
+		async function fetchOrders() {
+			const response = await fetch(
+				`/restaurant/orders?name=${encodeURIComponent(restaurantName)}`
+			);
+			const orders = await response.json();
+
+			const tbody = document.querySelector("#orders-body");
+			tbody.innerHTML = "";
+
+			if (orders.length === 0) {
+				tbody.innerHTML = "<tr><td colspan='7'>No orders yet.</td></tr>";
+				return;
+			}
+
+			orders.forEach((order) => {
+				const row = document.createElement("tr");
+				row.innerHTML = `
+            <td>${order.id}</td>
+            <td>${order.customer_name || "-"}</td>
+            <td>${order.customer_address}</td>
+            <td>${order.created_at}</td>
+            <td>${order.rider_name || "-"}</td>
+            <td>${order.context}</td>
+            <td>
+                ${
+					order.restaurant_completed
+						? ""
+						: `
+                <form action="/restaurant/complete/${order.id}" method="post" style="display:inline">
+                    <input type="hidden" name="restaurant" value="${restaurantName}" />
+                    <button type="submit">Mark as Completed</button>
+                </form>`
+				}
+            </td>`;
+				tbody.appendChild(row);
+			});
+		}
+	</script>
+
 	<body>
 		<h1><%= restaurant.name %> Menu Dashboard</h1>
 		<p>Cuisine: <%= restaurant.cuisine_type %></p>
@@ -69,7 +125,7 @@
 					<th>Actions</th>
 				</tr>
 			</thead>
-			<tbody>
+			<tbody id="orders-body">
 				<% orders.forEach(order => { %>
 				<tr>
 					<td><%= order.id %></td>

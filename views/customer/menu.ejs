@@ -48,8 +48,9 @@
 		</div>
 		<div class="popup-card" id="popupCard">
 			<h3>Popup Title</h3>
-			<p id="popup-card-context">popupText</p>
-			<button onclick="hidePopup()">Close</button>
+			<p id="popup-card-context"></p>
+			<button onclick="hidePopup()">Back</button>
+			<button onclick="pay()">Pay</button>
 		</div>
 	</body>
 	<script>
@@ -148,6 +149,33 @@
 		function hidePopup() {
 			document.getElementById("popupCard").style.display = "none";
 			document.getElementById("overlay").style.display = "none";
+		}
+		function pay() {
+			fetch("/api/endpoint", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					context:,
+					price: (trolley.sumPrice + 10).toFixed(2),
+
+				}),
+			})
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error("Network response was not ok");
+					}
+					return response.json();
+				})
+				.then((data) => {
+					console.log("Payment success:", data);
+					alert("Payment processed!");
+				})
+				.catch((error) => {
+					console.error("Payment error:", error);
+					alert("Payment failed.");
+				});
 		}
 	</script>
 </html>
