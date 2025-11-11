@@ -30,9 +30,7 @@ router.get("/menu/:id", (req, res) => {
     }
 });
 
-router.get("/receipt", (req, res) =>{
-    res.render("customer/receipt");
-})
+
 
 module.exports = router;
 
