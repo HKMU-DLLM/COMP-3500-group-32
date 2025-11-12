@@ -39,16 +39,20 @@ app.get("/", (req, res) => {
 app.post("/login", (req, res) => {
 	console.log("Login attempt:", req.body);
 
-	const role = req.body.role;
+	let role = req.body.role;
 	const name = req.body.name;
-	if (!["customer", "restaurant", "rider"].includes(role)) {
+	if (!["customer", "restaurants", "rider"].includes(role)) {
 		return res.redirect("/");
 	}
+
 	try {
 		const stmt = db.prepare(`SELECT * FROM ${role} WHERE name = ?`);
 		const user = stmt.get(name);
 		if (!user) {
 			return res.redirect("/"); // invalid login
+		}
+		if (role == "restaurants") {
+			role = "restaurant";
 		}
 		req.session.name = name;
 		res.redirect(`/${role}?name=${encodeURIComponent(name)}`);

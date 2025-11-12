@@ -123,6 +123,8 @@ router.post("/neworder", (req, res) => {
 			restaurantAddress,
 			contextString
 		);
+		const io = req.app.get("io");
+		io.emit("newOrder", { restaurantName });
 
 		res.send("✅ Order placed successfully and verified on server!");
 	} catch (err) {

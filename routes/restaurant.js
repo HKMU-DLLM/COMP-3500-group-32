@@ -84,8 +84,6 @@ router.post("/newOrder", (req, res) => {
 	).run(restaurant_name, customer_name, customer_address, context);
 
 	// Emit to all dashboards of that restaurant
-	const io = req.app.get("io");
-	io.emit("newOrder", { restaurant_name });
 
 	res.json({ success: true });
 });
