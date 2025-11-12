@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 		<title>Payment</title>
 		<!-- <link rel="stylesheet" href="/style.css" />
 		<style>
@@ -55,21 +55,32 @@
 			<h2>Order Summary</h2>
 
 			<table>
-				<% mergedItems.forEach((item) => { %>
-				<tr>
-					<td><%= item.dish_name %></td>
-					<td><%= item.quantity %></td>
-					<td>$<%= item.price*item.quantity %></td>
-				</tr>
-
-				<%}); %>
 				<tr>
 					<th>Dish</th>
 					<th>Quantity</th>
+					<th>Price</th>
 				</tr>
+				<% let price = 0; mergedItems.forEach((item) => { %>
+				<tr>
+					<td><%= item.dish_name %></td>
+					<td><%= item.quantity %></td>
+					<td>$<%= item.price * item.quantity %></td>
+				</tr>
+				<% price += item.price * item.quantity; %> <% }); %>
 			</table>
 
-			<button class="pay-btn">Pay Now</button>
+			<div class="delivery-fee">Delivery Fee: $10.00</div>
+			<div class="total">Total: $<%= price + 10 %></div>
+
+			<form style="display: inline" action="/customer/neworder" method="post">
+				<% mergedItems.forEach(item => { %>
+				<input
+					type="hidden"
+					name="orderDetails[<%= item.id %>]"
+					value="<%= item.quantity %>" />
+				<% }); %>
+				<button class="pay-btn" type="submit">Pay Now</button>
+			</form>
 		</div>
 	</body>
 </html>

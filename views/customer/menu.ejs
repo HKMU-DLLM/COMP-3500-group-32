@@ -50,7 +50,11 @@
 			<h3>Popup Title</h3>
 			<p id="popup-card-context"></p>
 			<button onclick="hidePopup()">Back</button>
-			<button onclick="pay()">Pay</button>
+			<form style="display: inline" action="/customer/pay" method="post">
+				<input type="hidden" name="orderDetails" id="orderDetailsInput" />
+
+				<button type="submit">Pay</button>
+			</form>
 		</div>
 	</body>
 	<script>
@@ -149,7 +153,8 @@
 			summaryText += `\nTotal Price: $${totalPrice}\nDelivery Fee: $${deliveryFee.toFixed(
 				2
 			)}\nGrand Total: $${grandTotal}`;
-
+			console.log("trolley:", trolley.quantities);
+			document.getElementById("orderDetailsInput").value = JSON.stringify(trolley.quantities);
 			showPopup(summaryText);
 		}
 		function showPopup(orderDetails) {
@@ -163,15 +168,7 @@
 
 		function pay() {
 			hidePopup();
-			fetch("/customer/pay", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					orderDetails: trolley.quantities,
-				}),
-			});
+			console.log("Paying with order details:", trolley.quantities);
 		}
 	</script>
 </html>

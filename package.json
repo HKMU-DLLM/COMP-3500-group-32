@@ -11,7 +11,8 @@
 		"ejs": "latest",
 		"express": "latest",
 		"better-sqlite3": "latest",
-		"socket.io": "latest"
+		"socket.io": "latest",
+		"express-session": "latest"
 	},
 	"keywords": [],
 	"author": "",

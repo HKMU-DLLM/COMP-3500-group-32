@@ -31,7 +31,9 @@ router.get("/menu/:id", (req, res) => {
 });
 
 router.post("/pay", (req, res) => {
-	const { orderDetails } = req.body;
+	const orderDetails = JSON.parse(req.body.orderDetails);
+
+	console.log("Received orderDetails:", orderDetails);
 	try {
 		const ids = Object.keys(orderDetails);
 		const placeholders = ids.map(() => "?").join(",");
@@ -43,11 +45,89 @@ router.post("/pay", (req, res) => {
 			quantity: orderDetails[item.id.toString()] || 0,
 		}));
 
-		console.log(mergedItems);
-		res.render("customer/payment", { mergedItems });
+		res.render("customer/payment", { mergedItems: mergedItems });
 	} catch (err) {
 		console.error(err);
 		res.status(500).send("Database error");
+	}
+});
+router.post("/neworder", (req, res) => {
+	const orderDetails = req.body.orderDetails; // e.g. { '4': '1', '5': '2' }
+	const customerName = req.session.name || "Guest";
+
+	try {
+		// 1. Validate and extract item IDs
+		const ids = Object.keys(orderDetails);
+		if (ids.length === 0) return res.status(400).send("No items in order");
+
+		// 2. Fetch menu details securely from DB
+		const placeholders = ids.map(() => "?").join(",");
+		const stmt = db.prepare(`
+			SELECT m.id, m.dish_name, m.price, m.restaurant, r.address AS restaurant_address
+			FROM menus m
+			JOIN restaurants r ON m.restaurant = r.name
+			WHERE m.id IN (${placeholders})
+		`);
+		const menuItems = stmt.all(...ids.map((id) => parseInt(id)));
+
+		// 3. Calculate total and create context string
+		let total = 10; // delivery fee
+		let contextArray = [];
+		let restaurantName = "";
+		let restaurantAddress = "";
+
+		for (const item of menuItems) {
+			const qty = parseInt(orderDetails[item.id]);
+			if (isNaN(qty) || qty <= 0) continue;
+
+			const subtotal = item.price * qty;
+			total += subtotal;
+			contextArray.push(`${item.dish_name} x${qty} ($${subtotal.toFixed(2)})`);
+
+			// All items assumed to be from the same restaurant
+			restaurantName = item.restaurant;
+			restaurantAddress = item.restaurant_address;
+		}
+
+		if (contextArray.length === 0) return res.status(400).send("Invalid order items");
+
+		const contextString = contextArray.join(", ");
+
+		// 4. Fetch customer address
+		const customer = db
+			.prepare("SELECT address FROM customer WHERE name = ?")
+			.get(customerName);
+
+		if (!customer) return res.status(400).send("Customer not found");
+
+		const customerAddress = customer.address;
+
+		// 5. Insert into orders table
+		const insertOrder = db.prepare(`
+			INSERT INTO orders (
+				customer_name,
+				customer_address,
+				restaurant_name,
+				restaurant_address,
+				context,
+				created_at,
+				restaurant_completed
+			)
+			VALUES (?, ?, ?, ?, ?, datetime('now'), 0)
+		`);
+
+		insertOrder.run(
+			customerName,
+			customerAddress,
+			restaurantName,
+			restaurantAddress,
+			contextString
+		);
+
+		res.send("✅ Order placed successfully and verified on server!");
+	} catch (err) {
+		console.error("❌ Failed to insert order:", err);
+		res.status(500).send("Failed to store order.");
 	}
 });
 
