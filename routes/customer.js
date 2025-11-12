@@ -52,32 +52,47 @@ router.post("/pay", (req, res) => {
 	}
 });
 router.post("/neworder", (req, res) => {
-	const orderDetails = req.body.orderDetails; // e.g. { '4': '1', '5': '2' }
+	const { itemIds, quantities } = req.body;
+	console.log("Received item IDs:", itemIds);
+	console.log("Received quantities:", quantities);
+
 	const customerName = req.session.name || "Guest";
 
 	try {
-		// 1. Validate and extract item IDs
-		const ids = Object.keys(orderDetails);
-		if (ids.length === 0) return res.status(400).send("No items in order");
+		// 1. Validate input
+		if (
+			!itemIds ||
+			!quantities ||
+			itemIds.length === 0 ||
+			itemIds.length !== quantities.length
+		) {
+			return res.status(400).send("No items in order or mismatched data");
+		}
 
-		// 2. Fetch menu details securely from DB
-		const placeholders = ids.map(() => "?").join(",");
+		// 2. Create orderDetails map from arrays
+		const orderDetails = {};
+		itemIds.forEach((id, index) => {
+			orderDetails[id] = parseInt(quantities[index]);
+		});
+
+		// 3. Fetch menu details securely from DB
+		const placeholders = itemIds.map(() => "?").join(",");
 		const stmt = db.prepare(`
 			SELECT m.id, m.dish_name, m.price, m.restaurant, r.address AS restaurant_address
 			FROM menus m
 			JOIN restaurants r ON m.restaurant = r.name
 			WHERE m.id IN (${placeholders})
 		`);
-		const menuItems = stmt.all(...ids.map((id) => parseInt(id)));
+		const menuItems = stmt.all(...itemIds.map((id) => parseInt(id)));
 
-		// 3. Calculate total and create context string
+		// 4. Calculate total and create context string
 		let total = 10; // delivery fee
 		let contextArray = [];
 		let restaurantName = "";
 		let restaurantAddress = "";
 
 		for (const item of menuItems) {
-			const qty = parseInt(orderDetails[item.id]);
+			const qty = orderDetails[item.id];
 			if (isNaN(qty) || qty <= 0) continue;
 
 			const subtotal = item.price * qty;
@@ -93,7 +108,7 @@ router.post("/neworder", (req, res) => {
 
 		const contextString = contextArray.join(", ");
 
-		// 4. Fetch customer address
+		// 5. Fetch customer address
 		const customer = db
 			.prepare("SELECT address FROM customer WHERE name = ?")
 			.get(customerName);
@@ -102,7 +117,7 @@ router.post("/neworder", (req, res) => {
 
 		const customerAddress = customer.address;
 
-		// 5. Insert into orders table
+		// 6. Insert into orders table
 		const insertOrder = db.prepare(`
 			INSERT INTO orders (
 				customer_name,
@@ -123,6 +138,7 @@ router.post("/neworder", (req, res) => {
 			restaurantAddress,
 			contextString
 		);
+
 		const io = req.app.get("io");
 		io.emit("newOrder", { restaurantName });
 

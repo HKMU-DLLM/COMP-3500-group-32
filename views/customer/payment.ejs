@@ -74,10 +74,9 @@
 
 			<form style="display: inline" action="/customer/neworder" method="post">
 				<% mergedItems.forEach(item => { %>
-				<input
-					type="hidden"
-					name="orderDetails[<%= item.id %>]"
-					value="<%= item.quantity %>" />
+				<!-- Send both ID and quantity as separate fields -->
+				<input type="hidden" name="itemIds[]" value="<%= item.id %>" />
+				<input type="hidden" name="quantities[]" value="<%= item.quantity %>" />
 				<% }); %>
 				<button class="pay-btn" type="submit">Pay Now</button>
 			</form>
