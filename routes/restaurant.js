@@ -73,19 +73,30 @@ router.post("/menu/delete/:id", (req, res) => {
 	res.redirect(`/restaurant?name=${encodeURIComponent(menu.restaurant)}`);
 });
 
-router.post("/newOrder", (req, res) => {
-	const { restaurant_name, customer_name, customer_address, context } = req.body;
+router.get("/orders", (req, res) => {
+	const restaurantName = req.query.name;
 
-	db.prepare(
+	if (!restaurantName) {
+		return res.status(400).json({ error: "Restaurant name is required" });
+	}
+
+	try {
+		const orders = db
+			.prepare(
+				`
+		SELECT DISTINCT *
+		FROM orders
+		WHERE restaurant_name = ? AND restaurant_completed = 0
+		ORDER BY created_at
 		`
-		INSERT INTO orders (restaurant_name, customer_name, customer_address, context)
-		VALUES (?, ?, ?, ?)
-	`
-	).run(restaurant_name, customer_name, customer_address, context);
+			)
+			.all(restaurantName);
 
-	// Emit to all dashboards of that restaurant
-
-	res.json({ success: true });
+		res.json(orders);
+	} catch (err) {
+		console.error("Error fetching orders:", err);
+		res.status(500).json({ error: "Failed to fetch orders" });
+	}
 });
 
 module.exports = router;

@@ -13,7 +13,6 @@ const restaurantRouter = require("./routes/restaurant");
 const customerRouter = require("./routes/customer");
 const riderRouter = require("./routes/rider");
 
-app.set("io", io);
 // Middleware
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -21,6 +20,14 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.set("io", io);
+io.on("connection", (socket) => {
+	console.log("✅ A user connected, socket ID:", socket.id);
+
+	socket.on("disconnect", () => {
+		console.log("❌ User disconnected, socket ID:", socket.id);
+	});
+});
 app.use(
 	session({
 		secret: "your-secret-key", // use a strong, unpredictable secret in production
@@ -68,4 +75,6 @@ app.use("/customer", customerRouter);
 app.use("/rider", riderRouter);
 
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+server.listen(PORT, () => {
+	console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
