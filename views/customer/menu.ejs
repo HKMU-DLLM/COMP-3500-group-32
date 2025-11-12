@@ -11,19 +11,19 @@
 			<p>This is your protected dashboard page.</p>
 		</div>
 		<div class="goodsList">
-			<% menus.forEach((m, i) => { %>
+			<% menus.forEach((m) => { %>
 			<div class="goods-item">
 				<div class="goods-info">
-					<h2 class="goods-title"><%= m.dish_name %></h2>
+					<h2 class="goods-title" id="goods-title-<%= m.id%>"><%= m.dish_name %></h2>
 					<div class="goods-confirm">
 						<p class="goods-price">
 							<span class="goods-price-unit">$</span>
-							<span class="itemPrice"><%= m.price %></span>
+							<span class="itemPrice" id="itemPrice-<%= m.id%>"><%= m.price %></span>
 						</p>
 						<div class="goods-btns">
-							<i index="<%= i %>" class="i-minus">&#x2212;</i>
-							<span id="quantity-<%= i %>">0</span>
-							<i index="<%= i %>" class="i-plus">&#x2b;</i>
+							<i index="<%= m.id %>" class="i-minus">&#x2212;</i>
+							<span id="quantity-<%= m.id %>">0</span>
+							<i index="<%= m.id %>" class="i-plus">&#x2b;</i>
 						</div>
 					</div>
 				</div>
@@ -97,7 +97,7 @@
 					this.quantities[index]--;
 					this.sum--;
 					this.sumPrice -= parseFloat(
-						document.querySelectorAll(".itemPrice")[index].textContent
+						document.getElementById(`itemPrice-${index}`).textContent
 					);
 				}
 				document.getElementById(`quantity-${index}`).textContent = this.quantities[index];
@@ -109,7 +109,7 @@
 				document.getElementById(`quantity-${index}`).textContent = this.quantities[index];
 				this.sum++;
 				this.sumPrice += parseFloat(
-					document.querySelectorAll(".itemPrice")[index].textContent
+					document.getElementById(`itemPrice-${index}`).textContent
 				);
 			}
 
@@ -127,55 +127,51 @@
 				alert("Your cart is empty!");
 				return;
 			}
-			let orderDetails = "You have ordered:\n";
+
+			let orderDetailsArray = [];
+
 			for (const [index, quantity] of Object.entries(trolley.quantities)) {
 				if (quantity > 0) {
-					const dishName = document.querySelectorAll(".goods-title")[index].textContent;
-					orderDetails += `${dishName} x ${quantity}\n`;
+					const dishName = document.getElementById(`goods-title-${index}`).textContent;
+					orderDetailsArray.push([dishName, quantity]);
 				}
 			}
-			orderDetails += `Total Price: $${trolley.sumPrice.toFixed(
+
+			const totalPrice = trolley.sumPrice.toFixed(2);
+			const deliveryFee = 10;
+			const grandTotal = (trolley.sumPrice + deliveryFee).toFixed(2);
+
+			// Display summary in popup
+			let summaryText = "You have ordered:\n";
+			for (const [dish, qty] of orderDetailsArray) {
+				summaryText += `${dish} x ${qty}\n`;
+			}
+			summaryText += `\nTotal Price: $${totalPrice}\nDelivery Fee: $${deliveryFee.toFixed(
 				2
-			)}\nDelivery Fee: $10.00\nGrand Total: $${(trolley.sumPrice + 10).toFixed(2)}`;
-			showPopup(orderDetails);
-			// alert(orderDetails);
+			)}\nGrand Total: $${grandTotal}`;
+
+			showPopup(summaryText);
 		}
 		function showPopup(orderDetails) {
 			document.getElementById("popup-card-context").innerText = orderDetails;
 			document.getElementById("popupCard").style.display = "block";
-			document.getElementById("overlay").style.display = "block";
 		}
 
 		function hidePopup() {
 			document.getElementById("popupCard").style.display = "none";
-			document.getElementById("overlay").style.display = "none";
 		}
+
 		function pay() {
-			fetch("/api/endpoint", {
+			hidePopup();
+			fetch("/customer/pay", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					context:,
-					price: (trolley.sumPrice + 10).toFixed(2),
-
+					orderDetails: trolley.quantities,
 				}),
-			})
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error("Network response was not ok");
-					}
-					return response.json();
-				})
-				.then((data) => {
-					console.log("Payment success:", data);
-					alert("Payment processed!");
-				})
-				.catch((error) => {
-					console.error("Payment error:", error);
-					alert("Payment failed.");
-				});
+			});
 		}
 	</script>
 </html>
