@@ -94,3 +94,22 @@ button[type=submit]:hover{
     background-color: rgb(234, 234, 234);
 
 }
+
+/* register button */
+
+button[type=button]{
+    height: 40px;
+    width: 80px;
+    font-size: large;
+    font-family: 'Times New Roman', Times, serif;
+    border: none;
+    border-radius: 6px;
+    background-color: white;
+box-shadow: 5px 5px 20px lightgray;
+    transition: 0.4s;
+}
+
+button[type=button]:hover{
+    background-color: rgb(234, 234, 234);
+
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Register</title>
+    <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>Register</h1>
+            <h2>Create an account</h2>
+            <br />
+        </div>
+
+        <form method="POST" action="/register" id="registerForm">
+            <div>
+                <label>
+                    <input type="radio" name="role" value="customer" checked id="role_customer"/> Customer
+                </label>
+                <label>
+                    <input type="radio" name="role" value="restaurants" id="role_restaurant"/> Restaurant
+                </label>
+                <label>
+                    <input type="radio" name="role" value="rider" id="role_rider"/> Rider
+                </label>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <input type="text" id="reg_name" name="name" placeholder="Name" />
+            </div>
+
+            <div id="div_address" style="margin-top: 10px;">
+                <input type="text" id="reg_address" name="address" placeholder="Address" />
+            </div>
+
+            <div id="div_cuisine" style="margin-top: 10px;">
+                <input type="text" id="reg_cuisine" name="cuisine_type" placeholder="Cuisine Type" />
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button type="submit">Register</button>
+                <button type="button" onclick="window.location.href='/'">Back</button>
+            </div>
+        </form>
+
+        <script>
+            // Show/hide fields based on selected role
+            const roleRadios = document.querySelectorAll('input[name="role"]');
+            const divAddress = document.getElementById('div_address');
+            const divCuisine = document.getElementById('div_cuisine');
+            const inputName = document.getElementById('reg_name');
+            const inputAddress = document.getElementById('reg_address');
+            const inputCuisine = document.getElementById('reg_cuisine');
+
+            function updateRegisterFields() {
+                const selected = document.querySelector('input[name="role"]:checked').value;
+                if (selected === 'customer') {
+                    divAddress.style.display = 'block';
+                    divCuisine.style.display = 'none';
+                    inputName.required = true;
+                    inputAddress.required = true;
+                    inputCuisine.required = false;
+                    inputCuisine.value = '';
+                } else if (selected === 'restaurants') {
+                    divAddress.style.display = 'block';
+                    divCuisine.style.display = 'block';
+                    inputName.required = true;
+                    inputAddress.required = true;
+                    inputCuisine.required = true;
+                } else if (selected === 'rider') {
+                    divAddress.style.display = 'none';
+                    divCuisine.style.display = 'none';
+                    inputName.required = true;
+                    inputAddress.required = false;
+                    inputAddress.value = '';
+                    inputCuisine.required = false;
+                    inputCuisine.value = '';
+                }
+            }
+
+            roleRadios.forEach(r => r.addEventListener('change', updateRegisterFields));
+            // initialize on load
+            updateRegisterFields();
+        </script>
+    </div>
+</body>
+</html>

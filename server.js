@@ -43,6 +43,12 @@ app.get("/", (req, res) => {
 	res.status(200).render("auth/login");
 });
 
+// Registration page
+app.get("/register", (req, res) => {
+    console.log("New access to registration page");
+    res.status(200).render("auth/register");
+});
+
 app.post("/login", (req, res) => {
 	console.log("Login attempt:", req.body);
 
@@ -66,6 +72,51 @@ app.post("/login", (req, res) => {
 	} catch (err) {
 		console.error(err);
 		res.status(500).send("Database error");
+	}
+});
+
+// Registration handler
+app.post("/register", (req, res) => {
+	console.log("Registration attempt:", req.body);
+
+	let role = req.body.role;
+	const name = req.body.name;
+	const address = req.body.address;
+	const cuisine_type = req.body.cuisine_type;
+
+	if (!["customer", "restaurants", "rider"].includes(role)) {
+		return res.redirect("/register");
+	}
+
+	try {
+		if (role === "customer") {
+			if (!name || !address) {
+				return res.status(400).send("Name and address are required for customer registration");
+			}
+			const stmt = db.prepare(`INSERT INTO customer (name, address) VALUES (?, ?)`);
+			stmt.run(name, address);
+		} else if (role === "restaurants") {
+			if (!name || !address || !cuisine_type) {
+				return res.status(400).send("Name, cuisine type, and address are required for restaurant registration");
+			}
+			const stmt = db.prepare(`INSERT INTO restaurants (name, cuisine_type, address) VALUES (?, ?, ?)`);
+			stmt.run(name, cuisine_type, address);
+		} else if (role === "rider") {
+			if (!name) {
+				return res.status(400).send("Name is required for rider registration");
+			}
+			const stmt = db.prepare(`INSERT INTO rider (name) VALUES (?)`);
+			stmt.run(name);
+		}
+
+		console.log(`Successfully registered ${role}: ${name}`);
+		res.redirect("/");
+	} catch (err) {
+		console.error(err);
+		if (err.message && err.message.includes("UNIQUE constraint failed")) {
+			return res.status(400).send("This name is already registered. Please use a different name.");
+		}
+		res.status(500).send("Database error during registration");
 	}
 });
 
