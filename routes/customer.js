@@ -124,18 +124,20 @@ router.post("/neworder", (req, res) => {
 				customer_address,
 				restaurant_name,
 				restaurant_address,
+				distance_m,
 				context,
 				created_at,
 				restaurant_completed
 			)
-			VALUES (?, ?, ?, ?, ?, datetime('now'), 0)
+			VALUES (?, ?, ?, ?, ?, ?, datetime('now'), 0)
 		`);
-
+		const distance_m = Math.floor(Math.random() * 1000) + 100;
 		insertOrder.run(
 			customerName,
 			customerAddress,
 			restaurantName,
 			restaurantAddress,
+			distance_m,
 			contextString
 		);
 
