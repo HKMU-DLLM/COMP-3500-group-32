@@ -13,10 +13,21 @@ npm start
 
 ## How to use
 
-Pre-setted Restaurant name:
+Pre-setted user name:
+
+Customer:
+
+-   Manda
+-   Ming
+
+Restaurant:
 
 -   McDonald's
 -   Sushiro
 -   Sharetea
+
+Rider:
+
+-   Manda
 
 If you messed up with the database, please copy the backup version in `/db_backup` to `/db`
