@@ -23,7 +23,7 @@ router.get("/menu/:id", (req, res) => {
 		const menus = stmt.all(id);
 		console.log(menus);
 
-		res.render("customer/menu", { menus });
+		res.render("customer/menu", { menus, id });
 	} catch (err) {
 		console.error(err);
 		res.status(500).send("Database error");

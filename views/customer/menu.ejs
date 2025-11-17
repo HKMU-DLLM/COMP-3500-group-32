@@ -7,8 +7,7 @@
 	</head>
 	<body>
 		<div class="container">
-			<h1>Welcome, customer</h1>
-			<p>This is your protected dashboard page.</p>
+			<h1><%=id%></h1>
 		</div>
 		<div class="goodsList">
 			<% menus.forEach((m) => { %>
@@ -33,7 +32,7 @@
 		<div class="footer">
 			<div class="car-container">
 				<div class="car">
-					<image href="./icon/car.webp" />
+					<img src="/images/shopping-cart.png" width="75" />
 					<span class="totalGoods">0</span>
 				</div>
 				<div class="car-price">
