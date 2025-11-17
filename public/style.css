@@ -197,15 +197,19 @@ button[type=submit]:active {
 /* register button */
 
 button[type=button]{
-    height: 40px;
-    width: 80px;
-    font-size: large;
-    font-family: 'Times New Roman', Times, serif;
+    height: 45px;
+    width: 120px;
+    font-size: 1.1em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     border: none;
-    border-radius: 6px;
-    background-color: white;
-box-shadow: 5px 5px 20px lightgray;
-    transition: 0.4;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    transition: all 0.3 ease;
+    font-weight: 500;
+    margin-top: 20px;
+    cursor: pointer;
 }
 
 button[type=button]:hover{
