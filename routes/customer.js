@@ -30,69 +30,38 @@ router.get("/menu/:id", (req, res) => {
 	}
 });
 
-router.post("/pay", (req, res) => {
-	const orderDetails = JSON.parse(req.body.orderDetails);
-
-	console.log("Received orderDetails:", orderDetails);
-	try {
-		const ids = Object.keys(orderDetails);
-		const placeholders = ids.map(() => "?").join(",");
-		const stmt = db.prepare(`SELECT * FROM menus WHERE id IN (${placeholders})`);
-		const menuItems = stmt.all(...ids.map((id) => parseInt(id)));
-
-		const mergedItems = menuItems.map((item) => ({
-			...item,
-			quantity: orderDetails[item.id.toString()] || 0,
-		}));
-
-		res.render("customer/payment", { mergedItems: mergedItems });
-	} catch (err) {
-		console.error(err);
-		res.status(500).send("Database error");
-	}
-});
+// New /neworder route - receives orderDetails and creates the order
 router.post("/neworder", (req, res) => {
-	const { itemIds, quantities } = req.body;
-	console.log("Received item IDs:", itemIds);
-	console.log("Received quantities:", quantities);
+	const orderDetails = JSON.parse(req.body.orderDetails);
+	console.log("Received orderDetails:", orderDetails);
 
 	const customerName = req.session.name || "Guest";
 
 	try {
 		// 1. Validate input
-		if (
-			!itemIds ||
-			!quantities ||
-			itemIds.length === 0 ||
-			itemIds.length !== quantities.length
-		) {
-			return res.status(400).send("No items in order or mismatched data");
+		const ids = Object.keys(orderDetails);
+		if (ids.length === 0) {
+			return res.status(400).send("No items in order");
 		}
 
-		// 2. Create orderDetails map from arrays
-		const orderDetails = {};
-		itemIds.forEach((id, index) => {
-			orderDetails[id] = parseInt(quantities[index]);
-		});
-
-		// 3. Fetch menu details securely from DB
-		const placeholders = itemIds.map(() => "?").join(",");
+		// 2. Fetch menu details securely from DB
+		const placeholders = ids.map(() => "?").join(",");
 		const stmt = db.prepare(`
-			SELECT m.id, m.dish_name, m.price, m.restaurant, r.address AS restaurant_address
-			FROM menus m
-			JOIN restaurants r ON m.restaurant = r.name
-			WHERE m.id IN (${placeholders})
-		`);
-		const menuItems = stmt.all(...itemIds.map((id) => parseInt(id)));
+      SELECT m.id, m.dish_name, m.price, m.restaurant, r.address AS restaurant_address
+      FROM menus m
+      JOIN restaurants r ON m.restaurant = r.name
+      WHERE m.id IN (${placeholders})
+    `);
+		const menuItems = stmt.all(...ids.map((id) => parseInt(id)));
 
-		// 4. Calculate total and create context string
+		// 3. Calculate total and create context string
 		let total = 10; // delivery fee
 		let contextArray = [];
 		let restaurantName = "";
 		let restaurantAddress = "";
 
 		for (const item of menuItems) {
-			const qty = orderDetails[item.id];
+			const qty = orderDetails[item.id.toString()];
 			if (isNaN(qty) || qty <= 0) continue;
 
 			const subtotal = item.price * qty;
@@ -108,7 +77,7 @@ router.post("/neworder", (req, res) => {
 
 		const contextString = contextArray.join(", ");
 
-		// 5. Fetch customer address
+		// 4. Fetch customer address
 		const customer = db
 			.prepare("SELECT address FROM customer WHERE name = ?")
 			.get(customerName);
@@ -117,22 +86,17 @@ router.post("/neworder", (req, res) => {
 
 		const customerAddress = customer.address;
 
-		// 6. Insert into orders table
+		// 5. Insert into orders table
 		const insertOrder = db.prepare(`
-			INSERT INTO orders (
-				customer_name,
-				customer_address,
-				restaurant_name,
-				restaurant_address,
-				distance_m,
-				context,
-				created_at,
-				restaurant_completed
-			)
-			VALUES (?, ?, ?, ?, ?, ?, datetime('now'), 0)
-		`);
+      INSERT INTO orders (
+        customer_name, customer_address, restaurant_name, restaurant_address,
+        distance_m, context, created_at, restaurant_completed, isPaid
+      ) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), 0, 0)
+    `);
+
 		const distance_m = Math.floor(Math.random() * 1000) + 100;
-		insertOrder.run(
+
+		const result = insertOrder.run(
 			customerName,
 			customerAddress,
 			restaurantName,
@@ -141,13 +105,107 @@ router.post("/neworder", (req, res) => {
 			contextString
 		);
 
-		const io = req.app.get("io");
-		io.emit("newOrder", { restaurantName });
+		const orderId = result.lastInsertRowid;
 
-		res.send("✅ Order placed successfully and verified on server!");
+		// Redirect to payment page
+		res.redirect(`/customer/payment/${orderId}`);
 	} catch (err) {
 		console.error("❌ Failed to insert order:", err);
 		res.status(500).send("Failed to store order.");
+	}
+});
+
+// GET route to render payment page
+router.get("/payment/:id", (req, res) => {
+	const orderId = parseInt(req.params.id);
+
+	try {
+		// Fetch the order details
+		const order = db
+			.prepare(
+				`
+      SELECT * FROM orders WHERE id = ?
+    `
+			)
+			.get(orderId);
+
+		if (!order) {
+			return res.status(404).send("Order not found");
+		}
+
+		// Parse the context to get items (if needed for display)
+		// Since we have the order ID, we can fetch menu items differently
+		// For now, let's parse from context string or refetch from orderDetails
+
+		// You might want to store orderDetails as JSON in the database
+		// For this example, I'll create mergedItems from the context
+		const contextItems = order.context
+			.split(", ")
+			.map((item) => {
+				const match = item.match(/(.+) x(\d+) \(\$([0-9.]+)\)/);
+				if (match) {
+					return {
+						dish_name: match[1],
+						quantity: parseInt(match[2]),
+						price: parseFloat(match[3]) / parseInt(match[2]),
+					};
+				}
+				return null;
+			})
+			.filter(Boolean);
+
+		res.render("customer/payment", {
+			mergedItems: contextItems,
+			orderId: orderId,
+		});
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Database error");
+	}
+});
+
+router.post("/pay", (req, res) => {
+	const { orderId } = req.body;
+	console.log("Marking order as paid:", orderId);
+
+	try {
+		if (!orderId) {
+			return res.status(400).send("Order ID is required");
+		}
+
+		// Fetch the order to get restaurant name
+		const order = db
+			.prepare(
+				`
+			SELECT restaurant_name FROM orders WHERE id = ?
+		`
+			)
+			.get(parseInt(orderId));
+
+		if (!order) {
+			return res.status(404).send("Order not found");
+		}
+
+		// Update the isPaid column to 1
+		const updateStmt = db.prepare(`
+			UPDATE orders 
+			SET isPaid = 1 
+			WHERE id = ?
+		`);
+
+		const result = updateStmt.run(parseInt(orderId));
+
+		if (result.changes === 0) {
+			return res.status(404).send("Order not found");
+		}
+
+		res.send("✅ Payment successful!");
+
+		const io = req.app.get("io");
+		io.emit("newOrder", { restaurantName: order.restaurant_name });
+	} catch (err) {
+		console.error("❌ Failed to update payment status:", err);
+		res.status(500).send("Failed to process payment.");
 	}
 });
 
