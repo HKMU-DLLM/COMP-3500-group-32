@@ -8,7 +8,12 @@ const db = new Database(dbPath);
 
 // Rider Dashboard: show available orders
 router.get("/", (req, res) => {
+	const riderName = req.query.name;
 	try {
+		const myorder = db.prepare("SELECT id FROM orders WHERE rider_name = ?").all(riderName);
+		if (myorder.length > 0) {
+			return res.redirect(`/rider/order?name=${encodeURIComponent(riderName)}`);
+		}
 		const orders = db
 			.prepare(
 				`
@@ -20,6 +25,7 @@ router.get("/", (req, res) => {
         rider_name,
         restaurant_name,
         restaurant_address,
+		restaurant_completed,
         distance_m,
         context
       FROM orders
@@ -27,7 +33,6 @@ router.get("/", (req, res) => {
     `
 			)
 			.all();
-
 		res.render("rider/dashboard", { orders });
 	} catch (err) {
 		console.error("❌ Error loading dashboard:", err);
@@ -59,7 +64,7 @@ router.post("/accept/:id", (req, res) => {
 		db.prepare("UPDATE orders SET rider_name = ? WHERE id = ?").run(riderName, orderId);
 		console.log(`✅ Order ${orderId} accepted by ${riderName}`);
 
-		res.status(200).json({ message: "Order accepted" });
+		res.status(200).json({ redirect: `/rider/order?name=${encodeURIComponent(riderName)}` });
 	} catch (err) {
 		console.error("❌ Error accepting order:", err);
 		res.status(500).json({ error: "Failed to accept order" });
@@ -67,7 +72,7 @@ router.post("/accept/:id", (req, res) => {
 });
 
 // Rider history page
-router.get("/history", (req, res) => {
+router.get("/order", (req, res) => {
 	try {
 		const riderName = req.query.name;
 		if (!riderName) return res.status(400).send("Missing rider name");
@@ -76,25 +81,23 @@ router.get("/history", (req, res) => {
 			.prepare(
 				`
       SELECT 
-        o.id,
-        o.customer_name,
-        o.customer_address,
-        o.created_at,
-        o.rider_name,
-        o.restaurant_name,
-        o.restaurant_address,
-        GROUP_CONCAT(m.dish_name || ' x' || oi.quantity, ', ') AS order_items
-      FROM orders o
-      JOIN order_items oi ON o.id = oi.order_id
-      JOIN menus m ON oi.menu_id = m.id
-      WHERE o.rider_name = ?
-      GROUP BY o.id
-      ORDER BY o.created_at DESC
+        id,
+        customer_name,
+        customer_address,
+        created_at,
+        restaurant_name,
+        restaurant_address,
+		restaurant_completed,
+		remaining_distance,
+        distance_m,
+        context
+      FROM orders
+      WHERE rider_name = ?
     `
 			)
 			.all(riderName);
 
-		res.render("rider/history", { riderName, orders });
+		res.render("rider/order", { riderName, order: orders[0] });
 	} catch (err) {
 		console.error("❌ Error loading history:", err);
 		res.status(500).send("Internal server error");

@@ -71,7 +71,7 @@
 			</thead>
 			<tbody>
 				<% if (orders && orders.length > 0) { %> <% orders.forEach(order => { %> <% if
-				(!order.rider_name) { %>
+				(!order.rider_name && order.restaurant_completed == 0) { %>
 				<tr id="order-<%= order.id %>">
 					<td><%= order.id %></td>
 					<td><%= order.restaurant_name %></td>
@@ -112,11 +112,24 @@
 						}
 					);
 
-					if (res.ok) {
-						document.getElementById("statusMessage").innerText = "✅ Order accepted";
-						document.getElementById(`order-${orderId}`).remove();
+					let data = null;
+					try {
+						data = await res.json();
+					} catch {
+						throw new Error("Invalid JSON response from server");
+					}
+
+					if (!res.ok) {
+						// ✅ Show server error message if available
+						alert(data?.error || "❌ Failed to accept order");
+						return;
+					}
+
+					// ✅ Redirect on success
+					if (data.redirect) {
+						window.location.href = data.redirect;
 					} else {
-						alert("❌ Failed to accept order");
+						alert("❌ No redirect URL provided by server");
 					}
 				} catch (err) {
 					console.error(err);
