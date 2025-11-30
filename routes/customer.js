@@ -94,7 +94,7 @@ router.post("/neworder", (req, res) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), 0, 0)
     `);
 
-		const distance_m = Math.floor(Math.random() * 1000) + 100;
+		const distance_m = Math.floor(Math.random() * 2000) + 100;
 
 		const result = insertOrder.run(
 			customerName,
