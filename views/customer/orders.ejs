@@ -97,7 +97,7 @@
 									<!-- Confirm Delivery Button -->
 									<div class="mt-3 confirm-button-container">
 										<% if (order.rider_name && order.remaining_distance === 0) { %>
-											<form action="/customer/confirm/<%= order.id %>" method="POST">
+											<form action="/customer/orders/<%= order.id %>/confirm" method="POST">
 												<button type="submit" class="btn btn-success w-100">Confirm Received & Complete Order</button>
 											</form>
 										<% } %>
@@ -137,6 +137,25 @@
 						statusText.textContent = 'Out for Delivery';
 						progressPercent.textContent = '75%';
 					}
+				}
+			});
+
+			// Listen for ready to deliver event (restaurant completed)
+			socket.on('readyToDeliver', (data) => {
+				const { orderID } = data;
+				const orderCard = document.querySelector(`[data-order-id="${orderID}"]`);
+				
+				if (orderCard) {
+					// Update progress bar to 50%
+					const progressBar = orderCard.querySelector('.progress-bar');
+					const statusText = orderCard.querySelector('.status-text');
+					const progressPercent = orderCard.querySelector('.progress-percent');
+					
+					progressBar.style.width = '50%';
+					progressBar.className = 'progress-bar bg-warning';
+					progressBar.setAttribute('aria-valuenow', '50');
+					statusText.textContent = 'Preparing Complete - Waiting for Rider';
+					progressPercent.textContent = '50%';
 				}
 			});
 

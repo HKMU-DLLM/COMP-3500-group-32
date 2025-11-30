@@ -61,7 +61,9 @@ router.post("/menu/edit/:id", (req, res) => {
 router.post("/complete/:id", (req, res) => {
 	const restaurant = req.body.restaurant;
 	db.prepare("UPDATE orders SET restaurant_completed = 1 WHERE id = ?").run(req.params.id);
-	res.redirect(`/restaurant?name=${encodeURIComponent(restaurant)}`);
+	res.redirect(`/restaurant`);
+	const io = req.app.get("io");
+	io.emit("readyToDeliver", { orderID: req.params.id});
 });
 // --- Delete menu item ---
 router.post("/menu/delete/:id", (req, res) => {
