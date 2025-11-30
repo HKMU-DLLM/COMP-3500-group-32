@@ -90,8 +90,8 @@ router.post("/neworder", (req, res) => {
 		const insertOrder = db.prepare(`
       INSERT INTO orders (
         customer_name, customer_address, restaurant_name, restaurant_address,
-        distance_m, context, created_at, restaurant_completed, isPaid
-      ) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), 0, 0)
+        distance_m, context, remaining_distance, created_at, restaurant_completed, isPaid
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), 0, 0)
     `);
 
 		const distance_m = Math.floor(Math.random() * 1000) + 100;
@@ -102,7 +102,8 @@ router.post("/neworder", (req, res) => {
 			restaurantName,
 			restaurantAddress,
 			distance_m,
-			contextString
+			contextString,
+			distance_m
 		);
 
 		const orderId = result.lastInsertRowid;
@@ -209,4 +210,34 @@ router.post("/pay", (req, res) => {
 	}
 });
 
+router.get("/orders", (req, res) => {
+	try {
+		const stmt = db.prepare("SELECT * FROM orders WHERE customer_name = ? AND isPaid = 1");
+		const orders = stmt.all(req.session.name);
+
+		res.render("customer/orders", { orders: orders, username: req.session.name });
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Database error");
+	}
+});
+
+router.post("/confirm/:id", (req, res) => {
+	const orderId = parseInt(req.params.id);
+	try {
+		const updateStmt = db.prepare(`
+			DELETE FROM orders 
+			WHERE id = ?
+		`);
+		const result = updateStmt.run(orderId);
+
+		if (result.changes === 0) {
+			return res.status(404).send("Order not found");
+		}
+		res.redirect("/customer/orders");
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Database error");
+	}
+});
 module.exports = router;

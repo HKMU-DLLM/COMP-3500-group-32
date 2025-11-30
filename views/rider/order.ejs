@@ -125,9 +125,20 @@
 				>
 				<br />
 				<button type="button" onclick="SendDistance()">Send distance</button>
-				<button type="button" onclick="" id="complete_button">Mark as Delivered</button>
+				<button type="button" onclick="MarkAsDelivered()" id="complete_button">Mark as Delivered</button>
 			</div>
 		</form>
+		<div id="deliveredPopup" 
+			style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+			<div style="background:white; padding:20px; border-radius:8px; text-align:center;">
+				<h3>Order Delivered Successfully!</h3>
+				<button id="confirmDeliveredBtn"
+					style="margin-top:15px; padding:8px 16px; cursor:pointer;">
+					Confirm
+				</button>
+			</div>
+		</div>
 	</body>
 	<script>
 		const remaining = <%= order.remaining_distance %>;
@@ -165,6 +176,34 @@
 				console.error('Error:', error);
 				alert('Error updating distance.');
 			});
+		}
+
+		function MarkAsDelivered() {
+			fetch(`/rider/mark-delivered/<%= order.id %>`, {
+				method: 'POST'
+				
+			})
+			.then(response => {
+				if (response.ok) {
+					showDeliveredPopup();
+				} else {
+					alert('Failed to mark order as delivered.');
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('Error marking order as delivered.');
+			});
+		}
+		function showDeliveredPopup() {
+			const popup = document.getElementById('deliveredPopup');
+			const confirmBtn = document.getElementById('confirmDeliveredBtn');
+
+			popup.style.display = 'flex';
+
+			confirmBtn.onclick = () => {
+				window.location.href = '/rider';
+			};
 		}
 		slider.addEventListener('input', updateFill);
 		updateFill();

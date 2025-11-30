@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require("../db/db");
 
 router.get("/", (req, res) => {
-	const name = req.query.name;
+	const name = req.session.name;
 	const restaurant = db
 		.prepare("SELECT rowid AS id, * FROM restaurants WHERE name = ?")
 		.get(name);

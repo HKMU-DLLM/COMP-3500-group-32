@@ -8,11 +8,11 @@ const db = new Database(dbPath);
 
 // Rider Dashboard: show available orders
 router.get("/", (req, res) => {
-	const riderName = req.query.name;
+	const riderName = req.session.name;
 	try {
-		const myorder = db.prepare("SELECT id FROM orders WHERE rider_name = ?").all(riderName);
+		const myorder = db.prepare("SELECT id FROM orders WHERE rider_name = ? AND isDelivered = 0").all(riderName);
 		if (myorder.length > 0) {
-			return res.redirect(`/rider/order?name=${encodeURIComponent(riderName)}`);
+			return res.redirect(`/rider/order`);
 		}
 		const orders = db
 			.prepare(
@@ -44,7 +44,7 @@ router.get("/", (req, res) => {
 router.post("/accept/:id", (req, res) => {
 	try {
 		const orderId = req.params.id;
-		const riderName = req.query.name || req.body.rider_name;
+		const riderName = req.session.name || req.body.rider_name;
 
 		if (!riderName) return res.status(400).json({ error: "Missing rider name" });
 
@@ -74,7 +74,7 @@ router.post("/accept/:id", (req, res) => {
 // Rider history page
 router.get("/order", (req, res) => {
 	try {
-		const riderName = req.query.name;
+		const riderName = req.session.name;
 		if (!riderName) return res.status(400).send("Missing rider name");
 
 		const orders = db
@@ -114,6 +114,19 @@ router.post("/update-distance/:id", (req, res) => {
 		io.emit("updateDistance", { orderID: orderId, remainingDistance: distance });
 	} catch (err) {
 		console.error("❌ Error loading history:", err);
+		res.status(500).send("Internal server error");
+	}
+});
+
+router.post("/mark-delivered/:id", (req, res) => {
+	try {
+		const orderId = req.params.id;
+		db.prepare("UPDATE orders SET isDelivered = 1, remaining_distance = 0 WHERE id = ?").run(orderId);
+		res.status(200).json({ message: "Order marked as delivered" });
+		const io = req.app.get("io");
+		io.emit("orderDelivered", { orderID: orderId});
+	} catch (err) {
+		console.error("❌ Error marking order as delivered:", err);
 		res.status(500).send("Internal server error");
 	}
 });

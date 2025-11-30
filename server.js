@@ -68,7 +68,7 @@ app.post("/login", (req, res) => {
 			role = "restaurant";
 		}
 		req.session.name = name;
-		res.redirect(`/${role}?name=${encodeURIComponent(name)}`);
+		res.redirect(`/${role}`);
 	} catch (err) {
 		console.error(err);
 		res.status(500).send("Database error");

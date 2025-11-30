@@ -38,8 +38,9 @@ CREATE TABLE orders (
     id                   INTEGER  PRIMARY KEY AUTOINCREMENT,
     customer_name        TEXT,
     customer_address     TEXT     NOT NULL,
-    isPaid               INTEGER  NOT NULL
-                                    CHECK (isPaid IN (0, 1) ),
+    isPaid               INTEGER  CHECK (isPaid IN (0, 1) ) 
+                                    NOT NULL
+                                    DEFAULT (0),
     created_at           DATETIME DEFAULT CURRENT_TIMESTAMP,
     rider_name           TEXT,
     restaurant_completed INTEGER  DEFAULT (0) 
@@ -50,6 +51,8 @@ CREATE TABLE orders (
     distance_m           INTEGER,
     context              TEXT,
     remaining_distance   INTEGER,
+    isDelivered          INTEGER  CHECK (isDelivered IN (0, 1) ) 
+                                    DEFAULT (0),
     FOREIGN KEY (
         customer_name
     )
