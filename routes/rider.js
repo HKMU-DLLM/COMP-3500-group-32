@@ -104,4 +104,17 @@ router.get("/order", (req, res) => {
 	}
 });
 
+router.post("/update-distance/:id", (req, res) => {
+	try {
+		const orderId = req.params.id;
+		const distance = req.body.remaining_distance;
+		db.prepare("UPDATE orders SET remaining_distance = ? WHERE id = ?").run(distance, orderId);
+		res.status(200).json({ message: "Distance updated" });
+		const io = req.app.get("io");
+		io.emit("updateDistance", { orderID: orderId, remainingDistance: distance });
+	} catch (err) {
+		console.error("❌ Error loading history:", err);
+		res.status(500).send("Internal server error");
+	}
+});
 module.exports = router;

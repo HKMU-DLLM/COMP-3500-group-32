@@ -100,59 +100,27 @@
 		<!-- Socket.io must be loaded BEFORE your script -->
 		<script src="/socket.io/socket.io.js"></script>
 		<script>
-			console.log("🔧 Script loaded, io object:", typeof io);
-
-			// Check if io is available
-			if (typeof io === "undefined") {
-				console.error("❌ Socket.IO client library not loaded!");
-			} else {
-				console.log("✅ Socket.IO client library loaded");
-
+			if (typeof io !== "undefined") {
 				const socket = io();
 				const restaurantName = "<%= restaurant.name %>";
 
-				console.log("🔌 Attempting to connect...");
-				console.log("🏪 Restaurant name:", restaurantName);
-
-				socket.on("connect", () => {
-					console.log("✅✅✅ Connected to server! Socket ID:", socket.id);
-				});
-
-				socket.on("connect_error", (error) => {
-					console.error("❌ Connection error:", error);
-				});
-
-				socket.on("disconnect", (reason) => {
-					console.log("❌ Disconnected:", reason);
-				});
-
-				// Listen for new orders
+				// Listen for new orders from server
 				socket.on("newOrder", (data) => {
-					console.log("📦📦📦 New order event received:", data);
-
 					if (data.restaurantName === restaurantName) {
-						console.log("✅ Order is for THIS restaurant! Refreshing...");
 						fetchOrders();
-					} else {
-						console.log("ℹ️ Order is for different restaurant:", data.restaurantName);
 					}
 				});
 
-				// Fetch orders function
+				// Fetch and update order list
 				async function fetchOrders() {
-					console.log("📡 Fetching orders...");
 					try {
 						const response = await fetch(
 							`/restaurant/orders?name=${encodeURIComponent(restaurantName)}`
 						);
 
-						if (!response.ok) {
-							throw new Error(`HTTP error! status: ${response.status}`);
-						}
+						if (!response.ok) return;
 
 						const orders = await response.json();
-						console.log("📋 Fetched orders:", orders);
-
 						const tbody = document.querySelector("#orders-body");
 						tbody.innerHTML = "";
 
@@ -164,30 +132,33 @@
 						orders.forEach((order) => {
 							const row = document.createElement("tr");
 							row.innerHTML = `
-								<td>${order.id}</td>
-								<td>${order.customer_name || "-"}</td>
-								<td>${order.customer_address}</td>
-								<td>${order.created_at}</td>
-								<td>${order.rider_name || "-"}</td>
-								<td>${order.context}</td>
-								<td>
-									${
-										order.restaurant_completed
-											? ""
-											: `
-										<form action="/restaurant/complete/${order.id}" method="post" style="display:inline">
-											<input type="hidden" name="restaurant" value="${restaurantName}" />
-											<button type="submit">Mark as Completed</button>
-										</form>`
-									}
-								</td>
-							`;
+						<td>${order.id}</td>
+						<td>${order.customer_name || "-"}</td>
+						<td>${order.customer_address}</td>
+						<td>${order.created_at}</td>
+						<td>${order.rider_name || "-"}</td>
+						<td>${order.context}</td>
+						<td>
+							${
+								order.restaurant_completed
+									? ""
+									: `
+									<form action="/restaurant/complete/${order.id}" method="post" style="display:inline">
+										<input type="hidden" name="restaurant" value="${restaurantName}" />
+										<button type="submit">Mark as Completed</button>
+									</form>`
+							}
+						</td>
+					`;
 							tbody.appendChild(row);
 						});
-					} catch (error) {
-						console.error("❌ Error fetching orders:", error);
+					} catch (err) {
+						// silently ignore errors
 					}
 				}
+
+				// Initial load
+				fetchOrders();
 			}
 		</script>
 	</body>

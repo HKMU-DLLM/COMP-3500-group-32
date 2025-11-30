@@ -44,39 +44,44 @@
 			button:hover {
 				background: #45a049;
 			}
-      .distanceSlider {
-        width: 100%;               
-        appearance: none;          
-        height: 6px;
-        border-radius: 5px;
-        background: #ddd;
-        outline: none;
-      }
+			button:disabled {
+				background: #bfbfbf; /* light grey */
+				cursor: not-allowed;
+				opacity: 0.6;
+			}
+			button:disabled:hover {
+				background: #bfbfbf;
+			}
 
+			.distanceSlider {
+				width: 100%;
+				appearance: none;
+				height: 6px;
+				border-radius: 5px;
+				background: #ddd;
+				outline: none;
+			}
 
-      .distanceSlider::-webkit-slider-thumb {
-        appearance: none;
-        width: 18px;
-        height: 18px;
-        background: #4CAF50;
-        border-radius: 50%;
-        cursor: pointer;
-      }
-      .distanceSlider {
-        background: linear-gradient(
-          to right,
-          #4CAF50 calc(var(--value-percent) * 1%),
-          #ddd 0
-        );
-      }
-
+			.distanceSlider::-webkit-slider-thumb {
+				appearance: none;
+				width: 18px;
+				height: 18px;
+				background: #4caf50;
+				border-radius: 50%;
+				cursor: pointer;
+			}
+			.distanceSlider {
+				background: linear-gradient(
+					to right,
+					#4caf50 calc(var(--value-percent) * 1%),
+					#ddd 0
+				);
+			}
 		</style>
 	</head>
 	<body>
 		<h1>📜 <%= riderName %>'s Delivery History</h1>
-		<div style="text-align: center">
-	
-		</div>
+		<div style="text-align: center"></div>
 
 		<table>
 			<thead>
@@ -102,35 +107,66 @@
 				</tr>
 			</tbody>
 		</table>
-    <form>
-      <h3>Remaining Distance to Customer:</h3>
-      <div class="slidecontainer">
-        <input type="range" id="distanceSlider" min="0" max="<%= order.distance_m %>" step="1" value="<%= order.distance_m - order.remaining_distance %>" class="distanceSlider"/>
-      </div>
-      <div style="text-align: center">
-        <label for="distanceSlider" id="distance_label">Remaining distance: <%= order.remaining_distance %> m</label>
-        <br>
-        <button type="button" onclick="">Send distance</button>
-        <button type="button" onclick="">Mark as Delivered</button>
-      </div>
-    </form>
-  </body>
-  <script>
-    const remaining = <%= order.remaining_distance %>;
-    const slider = document.getElementById('distanceSlider');
+		<form>
+			<h3>Remaining Distance to Customer:</h3>
+			<div class="slidecontainer">
+				<input
+					type="range"
+					id="distanceSlider"
+					min="0"
+					max="<%= order.distance_m %>"
+					step="1"
+					value="<%= order.distance_m - order.remaining_distance %>"
+					class="distanceSlider" />
+			</div>
+			<div style="text-align: center">
+				<label for="distanceSlider" id="distance_label"
+					>Remaining distance: <%= order.remaining_distance %> m</label
+				>
+				<br />
+				<button type="button" onclick="SendDistance()">Send distance</button>
+				<button type="button" onclick="" id="complete_button">Mark as Delivered</button>
+			</div>
+		</form>
+	</body>
+	<script>
+		const remaining = <%= order.remaining_distance %>;
+		const slider = document.getElementById('distanceSlider');
+		const max = parseFloat(slider.max);
+		function updateFill() {
+			const min = parseFloat(slider.min);
+			const value = parseFloat(slider.value);
+			const percent = ((value - min) / (max - min)) * 100;
 
-    function updateFill() {
-      const min = parseFloat(slider.min);
-      const max = parseFloat(slider.max);
-      const value = parseFloat(slider.value);
-      const percent = ((value - min) / (max - min)) * 100;
+			slider.style.setProperty("--value-percent", percent);
+			document.getElementById("distance_label").innerText = `Remaining distance: ${max-value} m`;
+			if (value >= max) {
+				document.getElementById("complete_button").disabled = false;
+			}else{
+				document.getElementById("complete_button").disabled = true;
+			}
+		}
+		function SendDistance() {
+			const newRemaining = max - parseFloat(slider.value);
+			fetch(`/rider/update-distance/<%= order.id %>`, {
+				method: 'POST',
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ remaining_distance: newRemaining })
 
-      slider.style.setProperty("--value-percent", percent);
-      document.getElementById("distance_label").innerText = `Remaining distance: ${remaining-value} m`;
-    }
-
-    slider.addEventListener('input', updateFill);
-    updateFill();
-  </script>
-
+			})
+			.then(response => {
+				if (response.ok) {
+					alert('Distance updated successfully!');
+				} else {
+					alert('Failed to update distance.');
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				alert('Error updating distance.');
+			});
+		}
+		slider.addEventListener('input', updateFill);
+		updateFill();
+	</script>
 </html>
