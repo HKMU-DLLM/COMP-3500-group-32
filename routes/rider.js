@@ -1,10 +1,8 @@
 const express = require("express");
-const path = require("path");
 const Database = require("better-sqlite3");
 
 const router = express.Router();
-const dbPath = path.resolve(__dirname, "../db/db");
-const db = new Database(dbPath);
+const db = require("../db/db");
 
 // Rider Dashboard: show available orders
 router.get("/", (req, res) => {
