@@ -112,7 +112,31 @@
 
 		<script>
 			const socket = io();
+			socket.on('orderAccepted', (data) => {
+				const { orderID, riderName, remainingDistance } = data;
+				const orderCard = document.querySelector(`[data-order-id="${orderID}"]`);
+				
+				if (orderCard) {
+					const progressBar = orderCard.querySelector('.progress-bar');
+					const statusText = orderCard.querySelector('.status-text');
+					const progressPercent = orderCard.querySelector('.progress-percent');
+					
+					progressBar.style.width = '75%';
+					progressBar.className = 'progress-bar bg-primary';
+					progressBar.setAttribute('aria-valuenow', '75');
+					statusText.textContent = 'Out for Delivery';
+					progressPercent.textContent = '75%';
 
+					// Update or create rider info section
+					const orderDetails = orderCard.querySelector('.card-body > .mt-3');
+					if (orderDetails) {
+						orderDetails.innerHTML = `
+							<p class="mb-1"><strong>Rider:</strong> ${riderName}</p>
+							<p class="mb-0 remaining-distance-text"><strong>Remaining Distance:</strong> ${remainingDistance} m</p>
+						`;
+					}
+				}
+			});
 			// Listen for distance updates
 			socket.on('updateDistance', (data) => {
 				const { orderID, remainingDistance } = data;
@@ -120,9 +144,18 @@
 				
 				if (orderCard) {
 					// Update remaining distance text
-					const distanceText = orderCard.querySelector('.remaining-distance-text');
+					let distanceText = orderCard.querySelector('.remaining-distance-text');
 					if (distanceText) {
 						distanceText.innerHTML = `<strong>Remaining Distance:</strong> ${remainingDistance} m`;
+					} else {
+						// If distance text doesn't exist, find or create the order details section
+						const orderDetails = orderCard.querySelector('.card-body > .mt-3');
+						if (orderDetails) {
+							const existingDistance = orderDetails.querySelector('.remaining-distance-text');
+							if (!existingDistance) {
+								orderDetails.innerHTML += `<p class="mb-0 remaining-distance-text"><strong>Remaining Distance:</strong> ${remainingDistance} m</p>`;
+							}
+						}
 					}
 
 					// Update progress bar if distance is still > 0

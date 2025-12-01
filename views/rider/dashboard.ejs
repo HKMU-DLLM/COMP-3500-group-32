@@ -135,8 +135,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<% if (orders && orders.length > 0) { %> <% orders.forEach(order => { %> <% if
-				(!order.rider_name && order.restaurant_completed == 0) { %>
+				<% if (orders && orders.length > 0) { %> <% orders.forEach(order => { %> 
 				<tr id="order-<%= order.id %>">
 					<td><%= order.id %></td>
 					<td><%= order.restaurant_name %></td>
@@ -149,7 +148,7 @@
 					<td>$ <%= order.rewards %></td>
 					<td><button onclick="acceptOrder('<%= order.id %>')">Accept</button></td>
 				</tr>
-				<% } %> <% }); %> <% } else { %>
+				<% }); %> <% } else { %>
 				<tr>
 					<td colspan="10" style="text-align: center">No available orders</td>
 				</tr>

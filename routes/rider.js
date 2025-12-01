@@ -23,12 +23,11 @@ router.get("/", (req, res) => {
         rider_name,
         restaurant_name,
         restaurant_address,
-		restaurant_completed,
         distance_m,
         context,
 		rewards
       FROM orders
-      WHERE rider_name IS NULL
+      WHERE rider_name IS NULL AND restaurant_completed = 1
     `
 			)
 			.all();
@@ -61,14 +60,15 @@ router.post("/accept/:id", (req, res) => {
 		}
 
 		// Check order
-		const orderCheck = db.prepare("SELECT rider_name FROM orders WHERE id = ?").get(orderId);
+		const orderCheck = db.prepare("SELECT rider_name, distance_m FROM orders WHERE id = ?").get(orderId);
 		if (!orderCheck) return res.status(404).json({ error: "Order not found" });
 		if (orderCheck.rider_name) return res.status(400).json({ error: "Order already taken" });
 
 		// Accept order
 		db.prepare("UPDATE orders SET rider_name = ? WHERE id = ?").run(riderName, orderId);
 		console.log(`✅ Order ${orderId} accepted by ${riderName}`);
-
+		io = req.app.get("io");
+		io.emit("orderAccepted", { orderID: orderId, riderName: riderName, remainingDistance: orderCheck.distance_m });
 		res.status(200).json({ redirect: `/rider/order?name=${encodeURIComponent(riderName)}` });
 	} catch (err) {
 		console.error("❌ Error accepting order:", err);
@@ -128,6 +128,7 @@ router.post("/mark-delivered/:id", (req, res) => {
 	try {
 		const orderId = req.params.id;
 		db.prepare("UPDATE orders SET isDelivered = 1, remaining_distance = 0 WHERE id = ?").run(orderId);
+		db.prepare("UPDATE rider SET reward = reward + (SELECT rewards FROM orders WHERE id = ?) WHERE name = (SELECT rider_name FROM orders WHERE id = ?)").run(orderId, orderId);
 		res.status(200).json({ message: "Order marked as delivered" });
 		const io = req.app.get("io");
 		io.emit("orderDelivered", { orderID: orderId});
