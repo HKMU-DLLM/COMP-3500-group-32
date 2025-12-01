@@ -112,8 +112,8 @@ body {
  }
 
 
-/* role text field */
-input[type=text] {
+/* role text field (only inside .login panels) */
+.login input[type=text] {
     width: 180px;
     height: 35px;
     border: none;
@@ -138,6 +138,23 @@ input[type=text] {
     border-radius: 5px;
     padding: 0 10px;
     border-bottom: 2px solid #667eea;
+    color: #333;
+}
+
+/* Register form input styles (visible and static) */
+#registerForm input[type=text] {
+    position: static;
+    bottom: auto;
+    z-index: auto;
+    opacity: 1;
+    visibility: visible;
+    width: 320px;
+    display: inline-block;
+    margin: 6px 0;
+    background: rgba(255,255,255,0.9);
+    border-radius: 6px;
+    padding: 8px 10px;
+    border-bottom: 2px solid #ddd;
     color: #333;
 }
 
