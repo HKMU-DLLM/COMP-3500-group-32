@@ -39,20 +39,21 @@ CREATE TABLE orders (
     customer_name        TEXT,
     customer_address     TEXT     NOT NULL,
     isPaid               INTEGER  CHECK (isPaid IN (0, 1) ) 
-                                    NOT NULL
-                                    DEFAULT (0),
+                                  NOT NULL
+                                  DEFAULT (0),
     created_at           DATETIME DEFAULT CURRENT_TIMESTAMP,
     rider_name           TEXT,
     restaurant_completed INTEGER  DEFAULT (0) 
-                                    CHECK (restaurant_completed IN (0, 1) ) 
-                                    NOT NULL,
+                                  CHECK (restaurant_completed IN (0, 1) ) 
+                                  NOT NULL,
     restaurant_name      TEXT     NOT NULL,
     restaurant_address   TEXT     NOT NULL,
     distance_m           INTEGER,
     context              TEXT,
     remaining_distance   INTEGER,
     isDelivered          INTEGER  CHECK (isDelivered IN (0, 1) ) 
-                                    DEFAULT (0),
+                                  DEFAULT (0),
+    rewards              NUMERIC,
     FOREIGN KEY (
         customer_name
     )

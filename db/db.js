@@ -3,6 +3,6 @@ const path = require("path");
 
 const dbPath = path.resolve(__dirname, "restaurant.db");
 
-const db = new Database(dbPath, { verbose: console.log });
+const db = new Database(dbPath);
 
 module.exports = db;

@@ -93,6 +93,7 @@
 					<th>Customer Address</th>
 					<th>Context</th>
 					<th>Order Time</th>
+					<th>Rewards</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -104,6 +105,7 @@
 					<td><%= order.customer_address %></td>
 					<td><%= order.context %></td>
 					<td><%= order.created_at %></td>
+					<td>$ <%= order.rewards %></td>
 				</tr>
 			</tbody>
 		</table>

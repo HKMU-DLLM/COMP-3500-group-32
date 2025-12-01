@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<title>Rider Dashboard</title>
-		<link rel="stylesheet" href="/static/styles.css" />
+		<link rel="stylesheet" href="styles.css" />
 		<style>
 			body {
 				font-family: Arial, sans-serif;
@@ -13,6 +13,25 @@
 			h1 {
 				color: #333;
 				text-align: center;
+			}
+			.header-container {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 20px;
+			}
+			.reward-button {
+				background: #2196F3;
+				color: white;
+				border: none;
+				padding: 10px 20px;
+				cursor: pointer;
+				border-radius: 5px;
+				font-size: 16px;
+				font-weight: bold;
+			}
+			.reward-button:hover {
+				background: #0b7dda;
 			}
 			table {
 				border-collapse: collapse;
@@ -49,11 +68,56 @@
 				margin-top: 15px;
 				text-align: center;
 			}
+			.modal {
+				display: none;
+				position: fixed;
+				z-index: 1000;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.5);
+			}
+			.modal-content {
+				background-color: white;
+				margin: 15% auto;
+				padding: 30px;
+				border-radius: 10px;
+				width: 300px;
+				text-align: center;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+			}
+			.modal-content h2 {
+				margin-top: 0;
+				color: #2196F3;
+			}
+			.modal-content p {
+				font-size: 24px;
+				font-weight: bold;
+				color: #4caf50;
+				margin: 20px 0;
+			}
+			.close-button {
+				background: #f44336;
+				color: white;
+				border: none;
+				padding: 8px 16px;
+				cursor: pointer;
+				border-radius: 5px;
+				margin-top: 10px;
+			}
+			.close-button:hover {
+				background: #da190b;
+			}
 		</style>
 	</head>
 	<body>
 		<h1>🚴 Rider Dashboard</h1>
-		<p id="riderNameDisplay"></p>
+		
+		<div class="header-container">
+			<p id="riderNameDisplay"></p>
+			<button class="reward-button" onclick="showRewards()">💰 My Total Rewards</button>
+		</div>
 
 		<table id="ordersTable">
 			<thead>
@@ -66,6 +130,7 @@
 					<th>Customer Address</th>
 					<th>Distance(m)</th>
 					<th>Order Time</th>
+					<th>Rewards</th>
 					<th>Action</th>
 				</tr>
 			</thead>
@@ -81,11 +146,12 @@
 					<td><%= order.customer_address %></td>
 					<td><%= order.distance_m %></td>
 					<td><%= order.created_at %></td>
+					<td>$ <%= order.rewards %></td>
 					<td><button onclick="acceptOrder('<%= order.id %>')">Accept</button></td>
 				</tr>
 				<% } %> <% }); %> <% } else { %>
 				<tr>
-					<td colspan="8" style="text-align: center">No available orders</td>
+					<td colspan="10" style="text-align: center">No available orders</td>
 				</tr>
 				<% } %>
 			</tbody>
@@ -93,10 +159,37 @@
 
 		<p id="statusMessage" class="accepted"></p>
 
+		<!-- Reward Modal -->
+		<div id="rewardModal" class="modal">
+			<div class="modal-content">
+				<h2>🏆 Total Rewards</h2>
+				<p id="totalRewardAmount">$0.00</p>
+				<button class="close-button" onclick="closeModal()">Close</button>
+			</div>
+		</div>
+
 		<script>
-			const params = new URLSearchParams(window.location.search);
-			const riderName = params.get("name") || "Rider";
+			const riderName = "<%= riderNameIn%>";
+			const totalRewards = <%= totalRewardsIn%>;
+			
 			document.getElementById("riderNameDisplay").innerText = `👋 Welcome, ${riderName}`;
+
+			function showRewards() {
+				document.getElementById("totalRewardAmount").innerText = `$${totalRewards.toFixed(2)}`;
+				document.getElementById("rewardModal").style.display = "block";
+			}
+
+			function closeModal() {
+				document.getElementById("rewardModal").style.display = "none";
+			}
+
+			// Close modal when clicking outside
+			window.onclick = function(event) {
+				const modal = document.getElementById("rewardModal");
+				if (event.target == modal) {
+					closeModal();
+				}
+			}
 
 			async function acceptOrder(orderId) {
 				const confirmAccept = confirm("Confirm to accept this order?");

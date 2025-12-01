@@ -25,13 +25,20 @@ router.get("/", (req, res) => {
         restaurant_address,
 		restaurant_completed,
         distance_m,
-        context
+        context,
+		rewards
       FROM orders
       WHERE rider_name IS NULL
     `
 			)
 			.all();
-		res.render("rider/dashboard", { orders });
+		const totalRewards = db
+			.prepare(
+				` SELECT reward FROM rider WHERE name = ? `
+			)
+			.get(riderName)?.reward || 0;
+		
+		res.render("rider/dashboard", { orders:orders, totalRewardsIn: totalRewards ,riderNameIn:riderName});
 	} catch (err) {
 		console.error("❌ Error loading dashboard:", err);
 		res.status(500).send("Internal server error");
@@ -88,7 +95,8 @@ router.get("/order", (req, res) => {
 		restaurant_completed,
 		remaining_distance,
         distance_m,
-        context
+        context,
+		rewards
       FROM orders
       WHERE rider_name = ?
     `

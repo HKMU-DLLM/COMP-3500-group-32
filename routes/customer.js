@@ -90,12 +90,12 @@ router.post("/neworder", (req, res) => {
 		const insertOrder = db.prepare(`
       INSERT INTO orders (
         customer_name, customer_address, restaurant_name, restaurant_address,
-        distance_m, context, remaining_distance, created_at, restaurant_completed, isPaid
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), 0, 0)
+        distance_m, context, remaining_distance, rewards, created_at, restaurant_completed, isPaid
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), 0, 0)
     `);
 
 		const distance_m = Math.floor(Math.random() * 2000) + 100;
-
+		const rewards = (Math.random() * 40 + 10).toFixed(2);
 		const result = insertOrder.run(
 			customerName,
 			customerAddress,
@@ -103,7 +103,8 @@ router.post("/neworder", (req, res) => {
 			restaurantAddress,
 			distance_m,
 			contextString,
-			distance_m
+			distance_m,
+			rewards
 		);
 
 		const orderId = result.lastInsertRowid;
