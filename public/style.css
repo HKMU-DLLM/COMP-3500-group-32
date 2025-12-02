@@ -12,7 +12,7 @@ body {
 .container {
     display: center;
     width: 950px;
-    height: 625px;
+    height: 670px;
     border-radius: 20px;
     text-align: center;
     margin-top: 40px;
@@ -104,41 +104,100 @@ body {
     transition: 0.3s;
 }
 
- .radio-btn:hover, 
- input[type="radio"]:checked + .radio-btn {
+.radio-btn:hover{
     filter: brightness(1.1);
     transform: translateY(-5px) translateX(-5px);
     box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2); 
- }
+}
 
+input[type="radio"]:checked + .radio-btn {
+    filter: brightness(1.1);
+    transform: translateY(-5px) translateX(-5px);
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2); 
+}
+
+input[type="radio"]:checked + .radio-btn span {
+    transform: translateY(-50px);
+    transition: 0.3s;
+}
 
 /* role text field (only inside .login panels) */
-.login input[type=text] {
+.login input[type="text"]:disabled{
     width: 180px;
     height: 35px;
     border: none;
-    border-bottom: 2px solid #ddd;
     font-size: 16px;
     text-align: center;
-    transition: all 0.3 ease;
-    font-family: 'Times New Roman', Times, serif;
-    background: transparent;
     position: absolute;
-    bottom: 40px;
-    z-index: 1;
-    opacity: 0;
-    visibility: hidden;
+    bottom: 120px;
+    opacity: 0; 
+    visibility: hidden; 
 }
 
-.login input[type="radio"]:checked ~ input[type="text"]:not(:disabled) {
-    opacity: 1;
-    visibility: visible;
-    z-index: 2;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 5px;
-    padding: 0 10px;
-    border-bottom: 2px solid #667eea;
+.login input[type="radio"]:checked ~ input[type="text"]{
+    width: 180px;
+    height: 35px;
+    border: none;
+    font-size: 16px;
+    text-align: center;
+    position: absolute;
+    bottom: 120px;
+    opacity: 1; 
+    visibility: visible; 
+    background-color: #fefefd;
+    border-radius: 5px; 
     color: #333;
+    transform: translateY(-5px) translateX(-5px); 
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.5s ease, visibility 0s; 
+}
+
+button[type=submit]{
+    height: 40px;
+    width: 120px;
+    bottom: 50px;
+    font-size: 1.1em;
+    text-align: center;
+    position: absolute;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: none;
+    border-radius: 8px;
+    background: #0D1D55;
+    color: #fefefd;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+    margin-top: 20px;
+    opacity: 0; 
+    visibility: hidden; 
+}
+
+.login input[type="radio"]:checked ~ button[type=submit]{
+    height: 40px;
+    width: 120px;
+    bottom: 50px;
+    font-size: 1.1em;
+    text-align: center;
+    position: absolute;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: none;
+    border-radius: 8px;
+    background: #0D1D55;
+    color: #fefefd;
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    font-weight: 500;
+    margin-top: 20px;
+    opacity: 1; 
+    visibility: visible; 
+    z-index: 1;
+    transform: translateY(-5px) translateX(-5px); 
+    transition: opacity 0.5s ease, visibility 0s; 
+    cursor: pointer;
+}
+
+button[type=submit]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
 }
 
 /* Register form input styles (visible and static) */
@@ -159,62 +218,30 @@ body {
 }
 
 input[type=text]:focus {
-    border-color: #667eea;
     outline: none;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
 }
 
-input[type=text]:disabled {
-    display: none;
-}
-
-/* login button */
-button[type=submit] {
-    height: 45px;
-    width: 120px;
-    font-size: 1.1em;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    transition: all 0.3 ease;
-    font-weight: 500;
-    margin-top: 20px;
-    cursor: pointer;
-}
-
-button[type=submit]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
-    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-}
-
-button[type=submit]:active {
-    transform: translateY(0);
-}
 
 /* register button */
 
-button[type=button]{
+.register-button{
     height: 45px;
-    width: 120px;
+    width: 140px;
     font-size: 1.1em;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     border: none;
     border-radius: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    transition: all 0.3 ease;
+    background-color: #0D1D55;
+    color: #fefefd;
+    transition: 0.3s;
     font-weight: 500;
-    margin-top: 20px;
-    cursor: pointer;
 }
 
-button[type=button]:hover{
-    background-color: rgb(234, 234, 234);
-
+.register-button:hover{
+    filter: brightness(1.6);
+    transform: translateY(-5px) translateX(-5px); 
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
 }
 

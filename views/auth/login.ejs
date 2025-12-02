@@ -19,15 +19,12 @@
 					<label for="radio_customer" class="radio-btn"
 						><span class="material-symbols-outlined" style="font-size:105px;">solo_dining</span>
 						<br>
-						I am <br />
-						Customer</label
+						<span>I am <br />
+						Customer</span></label
 					>
-					<input
-						type="text"
-						id="customer_name"
-						name="name"
-						placeholder="Your Name"
+					<input type="text" id="customer_name" name="name" placeholder="Your Name" class="role_name_input"
 						disabled />
+					<button type="submit">Login</button>
 				</span>
 
 				<!-- Restaurant -->
@@ -36,14 +33,12 @@
 					<label for="radio_restaurant" class="radio-btn"
 						><span class="material-symbols-outlined" style="font-size: 110px;">storefront</span>
 						<br>
-						I am <br />
-						restaurant owner</label
+						<span>I am <br />
+						restaurant owner</span></label
 					>
-					<input
-						type="text"
-						id="restaurants_name"
-						name="name"
-						placeholder="Restaurant Name" />
+					<input type="text" id="restaurants_name" name="name" placeholder="Restaurant Name" class="role_name_input"
+					  disabled/>
+					<button type="submit">Login</button>
 				</span>
 
 				<!-- Rider -->
@@ -52,20 +47,15 @@
 					<label for="radio_rider" class="radio-btn"
 						><span class="material-symbols-outlined" style="font-size: 100px; margin-top: 12px;">directions_bike</span>
 						<br>
-						I am <br />
-						Rider</label
+						<span>I am <br />
+						Rider</span></label
 					>
-					<input
-						type="text"
-						id="rider_name"
-						name="name"
-						placeholder="Your name"
+					<input type="text" id="rider_name" name="name" placeholder="Your name" class="role_name_input"
 						disabled />
+					<button type="submit">Login</button>
 				</span>
 
-				<br />
-				<button type="submit">Login</button>
-				<button type="button" onclick="window.location.href='/register'">Register</button>
+				<button type="button" class="register-button" onclick="window.location.href='/register'">Sign Up</button>
 			</form>
 		</div>
 	</body>
