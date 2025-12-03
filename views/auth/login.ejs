@@ -22,9 +22,9 @@
 						<span>I am <br />
 						Customer</span></label
 					>
-					<input type="text" id="customer_name" name="name" placeholder="Your Name" class="role_name_input"
+					<input type="text" id="customer_name" name="name" placeholder="Your Name"
 						disabled />
-					<button type="submit">Login</button>
+					<button type="submit" class="login-button">Login</button>
 				</span>
 
 				<!-- Restaurant -->
@@ -36,9 +36,9 @@
 						<span>I am <br />
 						restaurant owner</span></label
 					>
-					<input type="text" id="restaurants_name" name="name" placeholder="Restaurant Name" class="role_name_input"
+					<input type="text" id="restaurants_name" name="name" placeholder="Restaurant Name"
 					  disabled/>
-					<button type="submit">Login</button>
+					<button type="submit" class="login-button">Login</button>
 				</span>
 
 				<!-- Rider -->
@@ -50,12 +50,12 @@
 						<span>I am <br />
 						Rider</span></label
 					>
-					<input type="text" id="rider_name" name="name" placeholder="Your name" class="role_name_input"
+					<input type="text" id="rider_name" name="name" placeholder="Your Name"
 						disabled />
-					<button type="submit">Login</button>
+					<button type="submit" class="login-button">Login</button>
 				</span>
 
-				<button type="button" class="register-button" onclick="window.location.href='/register'">Sign Up</button>
+				<button type="button" class="signup-button" onclick="window.location.href='/register'">Sign Up</button>
 			</form>
 		</div>
 	</body>
@@ -71,7 +71,7 @@
 				input.disabled = true;
 				input.required = false;
 				input.value = "";
-			});
+			});  
 
 			// Enable the one matching selected role
 			const selectedInput = document.getElementById(`${radio.value}_name`);
