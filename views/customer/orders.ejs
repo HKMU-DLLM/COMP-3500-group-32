@@ -11,14 +11,14 @@
 		<div class="container py-5">
 			<div class="position-relative mb-4">
 				<h1 class="text-center">My Orders</h1>
-				<a href="/customer/restaurants" class="btn btn-outline-primary position-absolute top-0 end-0">Back to Restaurants</a>
+				<a href="/customer/" class="btn btn-outline-primary position-absolute top-0 end-0">Back to Restaurants</a>
 			</div>
 
 			<% if (orders.length === 0) { %>
 				<div class="alert alert-info text-center">
 					<h4>No orders yet</h4>
 					<p>Start ordering from your favorite restaurants!</p>
-					<a href="/customer/restaurants" class="btn btn-primary">Browse Restaurants</a>
+					<a href="/customer/" class="btn btn-primary">Browse Restaurants</a>
 				</div>
 			<% } else { %>
 				<div class="row g-4">
