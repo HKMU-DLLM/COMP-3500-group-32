@@ -1,3 +1,68 @@
+/* dashboard */
+body{
+	background-color: #ece0ce;
+}
+h1 {
+    color: #16262E;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+#orders-button{
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+    height: 45px;
+    width: 140px;
+    font-size: 1.1em;
+    border: none;
+    border-radius: 8px;
+    background-color: #16262E;
+    color: #fefefd;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+#orders-button:hover{
+	filter: brightness(1.6);
+    transform: translateY(-5px) translateX(-5px); 
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+#restaurant-card{
+	background-color: #fefefd;
+	border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+
+#restaurant-card:hover{
+	transform: scale(1.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-title{
+	color: #16262E;
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+#view-button{
+	background-color: #587C74;
+	border: none;
+    transition: 0.3s;
+}
+
+#view-button:hover{
+	filter: brightness(1.1);
+    transform: translateY(-5px) translateX(-5px); 
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+/* costumer menu */
 .goods-btns {
 	display: flex;
 	align-items: center;
