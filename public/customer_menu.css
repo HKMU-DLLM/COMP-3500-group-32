@@ -1,6 +1,8 @@
 /* dashboard */
 body{
-	background-color: #ece0ce;
+	background: #ece0ce;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
 }
 h1 {
     color: #16262E;
