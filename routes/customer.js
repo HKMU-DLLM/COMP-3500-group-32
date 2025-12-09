@@ -117,12 +117,10 @@ router.post("/neworder", (req, res) => {
 	}
 });
 
-// GET route to render payment page
 router.get("/payment/:id", (req, res) => {
 	const orderId = parseInt(req.params.id);
 
 	try {
-		// Fetch the order details
 		const order = db
 			.prepare(
 				`
@@ -135,12 +133,6 @@ router.get("/payment/:id", (req, res) => {
 			return res.status(404).send("Order not found");
 		}
 
-		// Parse the context to get items (if needed for display)
-		// Since we have the order ID, we can fetch menu items differently
-		// For now, let's parse from context string or refetch from orderDetails
-
-		// You might want to store orderDetails as JSON in the database
-		// For this example, I'll create mergedItems from the context
 		const contextItems = order.context
 			.split(", ")
 			.map((item) => {
@@ -175,7 +167,6 @@ router.post("/pay", (req, res) => {
 			return res.status(400).send("Order ID is required");
 		}
 
-		// Fetch the order to get restaurant name
 		const order = db
 			.prepare(
 				`
@@ -188,7 +179,6 @@ router.post("/pay", (req, res) => {
 			return res.status(404).send("Order not found");
 		}
 
-		// Update the isPaid column to 1
 		const updateStmt = db.prepare(`
 			UPDATE orders 
 			SET isPaid = 1 

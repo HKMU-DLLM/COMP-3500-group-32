@@ -43,68 +43,60 @@
         </form>
 
         <script>
-        // Show/hide fields based on selected role
         const roleRadios = document.querySelectorAll('input[name="role"]');
-        const inputName = document.getElementById('reg_name'); // The input for name
-        const inputAddress = document.getElementById('reg_address'); // The input for address
-        const inputCuisine = document.getElementById('reg_cuisine'); // The input for cuisine
+        const inputName = document.getElementById('reg_name');
+        const inputAddress = document.getElementById('reg_address');
+        const inputCuisine = document.getElementById('reg_cuisine');
         const textInputs = [inputName, inputAddress, inputCuisine];
 
         textInputs.forEach(input => input.disabled = true);
 
         roleRadios.forEach((radio) => {
             radio.addEventListener("change", () => {
-                // Reset all text inputs
                 textInputs.forEach((input) => {
-                    input.disabled = true;  // Disable the input
-                    input.required = false; // Remove required attribute
-                    input.value = "";       // Clear input value
+                    input.disabled = true;
+                    input.required = false;
+                    input.value = "";
                 });
 
-        // Check which radio button is checked
         if (radio.checked) {
-            inputName.disabled = false; // Name is always required
-            inputName.required = true;  // Set name as required
+            inputName.disabled = false;
+            inputName.required = true;
             
             switch (radio.value) {
                 case 'customer':
-                    inputAddress.disabled = false; // Not required for customers
-                    inputCuisine.disabled = true; // Disable cuisine input
+                    inputAddress.disabled = false;
+                    inputCuisine.disabled = true;
                     break;
                 case 'restaurants':
-                    inputAddress.disabled = false; // Enable address input
-                    inputCuisine.disabled = false;  // Enable cuisine input
-                    inputCuisine.required = true;   // Cuisine is required
+                    inputAddress.disabled = false;
+                    inputCuisine.disabled = false;
+                    inputCuisine.required = true;
                     break;
                 case 'rider':
-                    inputAddress.disabled = true; // Not required for riders
-                    inputCuisine.disabled = true; // Disable cuisine input
+                    inputAddress.disabled = true;
+                    inputCuisine.disabled = true;
                     break;
             }
 
-            // Focus the name input field
             inputName.focus();
         }
     });
 });
 
 
-            // Initialize on load to set the right states
             if (document.querySelector('input[name="role"]:checked')) {
                 document.querySelector('input[name="role"]:checked').dispatchEvent(new Event('change'));
             }
             
             document.querySelectorAll('input[type="radio"]').forEach((radio) => {
             radio.addEventListener('change', function() {
-                // Remove the active class from all labels
                 document.querySelectorAll('.role-button').forEach((label) => {
                     label.classList.remove('active');
                 });
 
-                // Get the selected role
                 const selectedValue = this.value;
 
-                // Add the active class to unselected role buttons
                 document.querySelectorAll('input[type="radio"]').forEach((radioInput) => {
                     if (radioInput.value !== selectedValue) {
                         const label = document.querySelector(`label[for="${radioInput.id}"]`);

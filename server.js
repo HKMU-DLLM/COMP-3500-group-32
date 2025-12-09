@@ -30,10 +30,10 @@ io.on("connection", (socket) => {
 });
 app.use(
 	session({
-		secret: "your-secret-key", // use a strong, unpredictable secret in production
+		secret: "your-secret-key",
 		resave: false,
 		saveUninitialized: false,
-		cookie: { secure: false }, // set to true if using HTTPS
+		cookie: { secure: false },
 	})
 );
 
@@ -62,7 +62,7 @@ app.post("/login", (req, res) => {
 		const stmt = db.prepare(`SELECT * FROM ${role} WHERE name = ?`);
 		const user = stmt.get(name);
 		if (!user) {
-			return res.redirect("/"); // invalid login
+			return res.redirect("/");
 		}
 		if (role == "restaurants") {
 			role = "restaurant";

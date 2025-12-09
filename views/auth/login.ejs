@@ -13,7 +13,6 @@
 				<h2>Select Your Role</h2>
 			</div>
 			<form method="POST" action="/login" id="loginForm">
-				<!-- Customer -->
 				<span class="login">
 					<input type="radio" id="radio_customer" name="role" value="customer" />
 					<label for="radio_customer" class="radio-btn"
@@ -27,7 +26,6 @@
 					<button type="submit" class="login-button">Login</button>
 				</span>
 
-				<!-- Restaurant -->
 				<span class="login">
 					<input type="radio" id="radio_restaurant" name="role" value="restaurants" />
 					<label for="radio_restaurant" class="radio-btn"
@@ -41,7 +39,6 @@
 					<button type="submit" class="login-button">Login</button>
 				</span>
 
-				<!-- Rider -->
 				<span class="login">
 					<input type="radio" id="radio_rider" name="role" value="rider" />
 					<label for="radio_rider" class="radio-btn"
@@ -66,14 +63,12 @@
 
 	radios.forEach((radio) => {
 		radio.addEventListener("change", () => {
-			// Disable all text fields
 			textInputs.forEach((input) => {
 				input.disabled = true;
 				input.required = false;
 				input.value = "";
 			});  
 
-			// Enable the one matching selected role
 			const selectedInput = document.getElementById(`${radio.value}_name`);
 			if (selectedInput) {
 				selectedInput.disabled = false;

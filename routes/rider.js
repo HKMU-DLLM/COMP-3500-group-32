@@ -4,7 +4,6 @@ const Database = require("better-sqlite3");
 const router = express.Router();
 const db = require("../db/db");
 
-// Rider Dashboard: show available orders
 router.get("/", (req, res) => {
 	const riderName = req.session.name;
 	try {
@@ -44,7 +43,6 @@ router.get("/", (req, res) => {
 	}
 });
 
-// Accept order
 router.post("/accept/:id", (req, res) => {
 	try {
 		const orderId = req.params.id;
@@ -52,19 +50,16 @@ router.post("/accept/:id", (req, res) => {
 
 		if (!riderName) return res.status(400).json({ error: "Missing rider name" });
 
-		// Auto-create rider if not exist
 		const riderCheck = db.prepare("SELECT name FROM rider WHERE name = ?").get(riderName);
 		if (!riderCheck) {
 			db.prepare("INSERT INTO rider (name, reward) VALUES (?, 0)").run(riderName);
 			console.log(`🆕 Rider ${riderName} created.`);
 		}
 
-		// Check order
 		const orderCheck = db.prepare("SELECT rider_name, distance_m FROM orders WHERE id = ?").get(orderId);
 		if (!orderCheck) return res.status(404).json({ error: "Order not found" });
 		if (orderCheck.rider_name) return res.status(400).json({ error: "Order already taken" });
 
-		// Accept order
 		db.prepare("UPDATE orders SET rider_name = ? WHERE id = ?").run(riderName, orderId);
 		console.log(`✅ Order ${orderId} accepted by ${riderName}`);
 		io = req.app.get("io");
@@ -76,7 +71,6 @@ router.post("/accept/:id", (req, res) => {
 	}
 });
 
-// Rider history page
 router.get("/order", (req, res) => {
 	try {
 		const riderName = req.session.name;

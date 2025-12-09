@@ -95,7 +95,6 @@
 										<% } %>
 									</div>
 
-									<!-- Confirm Delivery Button -->
 									<div class="mt-3 confirm-button-container">
 										<% if (order.rider_name && order.remaining_distance === 0) { %>
 											<form action="/customer/confirm/<%= order.id %>" method="POST">

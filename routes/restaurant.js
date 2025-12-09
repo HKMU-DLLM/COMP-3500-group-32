@@ -26,7 +26,7 @@ router.get("/", (req, res) => {
 
 	res.render("restaurant/dashboard", { restaurant, menus, orders });
 });
-// --- Add new menu item ---
+
 router.post("/menu/new", (req, res) => {
 	const { restaurant, dish_name, price } = req.body;
 
@@ -39,7 +39,6 @@ router.post("/menu/new", (req, res) => {
 	res.redirect(`/restaurant?name=${encodeURIComponent(restaurant)}`);
 });
 
-// --- Edit menu item (GET + POST) ---
 router.get("/menu/edit/:id", (req, res) => {
 	const menu = db.prepare("SELECT * FROM menus WHERE id = ?").get(req.params.id);
 	if (!menu) return res.send("Menu not found");
@@ -57,7 +56,6 @@ router.post("/menu/edit/:id", (req, res) => {
 
 	res.redirect(`/restaurant?name=${encodeURIComponent(restaurant)}`);
 });
-// Mark order as completed
 router.post("/complete/:id", (req, res) => {
 	const restaurant = req.body.restaurant;
 	db.prepare("UPDATE orders SET restaurant_completed = 1 WHERE id = ?").run(req.params.id);
@@ -65,7 +63,6 @@ router.post("/complete/:id", (req, res) => {
 	const io = req.app.get("io");
 	io.emit("readyToDeliver", { orderID: req.params.id});
 });
-// --- Delete menu item ---
 router.post("/menu/delete/:id", (req, res) => {
 	const menu = db.prepare("SELECT restaurant FROM menus WHERE id = ?").get(req.params.id);
 	if (!menu) return res.send("Menu not found");
