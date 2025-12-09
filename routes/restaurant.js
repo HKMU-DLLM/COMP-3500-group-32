@@ -85,7 +85,7 @@ router.get("/orders", (req, res) => {
 				`
 		SELECT DISTINCT *
 		FROM orders
-		WHERE restaurant_name = ? AND restaurant_completed = 0
+		WHERE restaurant_name = ? AND restaurant_completed = 0 AND isPaid = 1
 		ORDER BY created_at
 		`
 			)
