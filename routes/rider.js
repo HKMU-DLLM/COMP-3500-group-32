@@ -92,7 +92,7 @@ router.get("/order", (req, res) => {
         context,
 		rewards
       FROM orders
-      WHERE rider_name = ?
+      WHERE rider_name = ? AND isDelivered = 0
     `
 			)
 			.all(riderName);
@@ -123,9 +123,9 @@ router.post("/mark-delivered/:id", (req, res) => {
 		const orderId = req.params.id;
 		db.prepare("UPDATE orders SET isDelivered = 1, remaining_distance = 0 WHERE id = ?").run(orderId);
 		db.prepare("UPDATE rider SET reward = reward + (SELECT rewards FROM orders WHERE id = ?) WHERE name = (SELECT rider_name FROM orders WHERE id = ?)").run(orderId, orderId);
-		res.status(200).json({ message: "Order marked as delivered" });
 		const io = req.app.get("io");
 		io.emit("orderDelivered", { orderID: orderId});
+		res.redirect(`/rider/`);
 	} catch (err) {
 		console.error("❌ Error marking order as delivered:", err);
 		res.status(500).send("Internal server error");
